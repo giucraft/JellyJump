@@ -100,9 +100,29 @@ function drawPet(x,y,size,id){
  ctx.restore();
 }
 function scenery(){
- const g=ctx.createLinearGradient(0,0,0,460);g.addColorStop(0,'#b9f0e7');g.addColorStop(1,'#e5f7d8');ctx.fillStyle=g;ctx.fillRect(0,0,720,460);
- ctx.fillStyle='#ffffffaa';for(let i=0;i<5;i++){let x=(i*175-frame*.25%850+850)%850;ctx.beginPath();ctx.arc(x,90+i%2*45,24,0,7);ctx.arc(x+25,82+i%2*45,30,0,7);ctx.arc(x+55,95+i%2*45,22,0,7);ctx.fill()}
- ctx.fillStyle='#9edb9b';ctx.fillRect(0,390,720,70);ctx.fillStyle='#79c88e';ctx.fillRect(0,390,720,8);
+ const sky=ctx.createLinearGradient(0,0,0,460);sky.addColorStop(0,'#8ed5ff');sky.addColorStop(.55,'#d7f4ff');sky.addColorStop(1,'#ffe9c9');ctx.fillStyle=sky;ctx.fillRect(0,0,720,460);
+ // distant hills
+ ctx.fillStyle='#a8dc9b';ctx.beginPath();ctx.moveTo(0,255);ctx.quadraticCurveTo(120,145,250,245);ctx.quadraticCurveTo(390,135,520,240);ctx.quadraticCurveTo(630,165,720,235);ctx.lineTo(720,460);ctx.lineTo(0,460);ctx.fill();
+ ctx.fillStyle='#7fc78b';ctx.beginPath();ctx.moveTo(0,300);ctx.quadraticCurveTo(160,205,300,295);ctx.quadraticCurveTo(520,190,720,290);ctx.lineTo(720,460);ctx.lineTo(0,460);ctx.fill();
+ // fluffy clouds
+ for(let i=0;i<4;i++){let x=(i*210-frame*.18%900+900)%900-70,y=65+(i%2)*55;ctx.fillStyle='#ffffffdd';ctx.beginPath();ctx.arc(x,y,23,0,7);ctx.arc(x+25,y-12,31,0,7);ctx.arc(x+55,y,23,0,7);ctx.fill()}
+ // winding golden path
+ ctx.fillStyle='#d69b58';ctx.beginPath();ctx.moveTo(260,230);ctx.quadraticCurveTo(305,285,160,460);ctx.lineTo(590,460);ctx.quadraticCurveTo(420,300,460,230);ctx.closePath();ctx.fill();
+ ctx.fillStyle='#edbd78';ctx.beginPath();ctx.moveTo(305,235);ctx.quadraticCurveTo(335,315,235,460);ctx.lineTo(510,460);ctx.quadraticCurveTo(390,315,420,235);ctx.closePath();ctx.fill();
+ // grass verges
+ ctx.fillStyle='#69b96d';ctx.fillRect(0,355,720,105);
+ // path over grass in foreground
+ ctx.fillStyle='#e8b66f';ctx.beginPath();ctx.moveTo(275,235);ctx.quadraticCurveTo(330,320,170,460);ctx.lineTo(575,460);ctx.quadraticCurveTo(400,320,445,235);ctx.closePath();ctx.fill();
+ // fence posts scrolling by
+ for(let i=0;i<8;i++){let x=((i*125-frame*1.1)%950+950)%950-100;let y=265+(i%3)*28;ctx.fillStyle='#9a6038';ctx.fillRect(x,y,12,72);ctx.fillStyle='#c88a50';ctx.fillRect(x-5,y+12,28,9);ctx.fillRect(x-5,y+43,28,9)}
+ // trees at both sides
+ for(let i=0;i<6;i++){let side=i%2===0?0:1;let x=side?650+(i%3)*48:35+(i%3)*42;let y=185+(i%3)*38;let s=1+(i%2)*.22;
+ ctx.fillStyle='#98603c';ctx.fillRect(x-9*s,y,18*s,75*s);
+ ctx.fillStyle=['#6fbd72','#8dcc79','#f2a9b1'][i%3];ctx.beginPath();ctx.arc(x,y-12*s,39*s,0,7);ctx.arc(x-25*s,y+4*s,28*s,0,7);ctx.arc(x+25*s,y+4*s,28*s,0,7);ctx.fill();
+ ctx.fillStyle='#ffffff55';for(let k=0;k<5;k++){ctx.beginPath();ctx.arc(x-20+k*10,y-25+(k%2)*8,4,0,7);ctx.fill()}
+ }
+ // flowers dotted along the grass
+ for(let i=0;i<34;i++){let x=(i*83+frame*.55)%740-10,y=300+(i*47%150);if(x<245||x>500){ctx.fillStyle=['#ff7e9b','#ffe17b','#fff','#b99af4'][i%4];for(let k=0;k<5;k++){let ang=k*Math.PI*2/5;ctx.beginPath();ctx.arc(x+Math.cos(ang)*4,y+Math.sin(ang)*4,3.5,0,7);ctx.fill()}ctx.fillStyle='#e6a84b';ctx.beginPath();ctx.arc(x,y,2.5,0,7);ctx.fill()}}
 }
 function draw(){
  scenery();
