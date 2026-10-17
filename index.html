@@ -69,7 +69,7 @@ const pets=[
 {id:'unicorn',name:'Unicorn',emoji:'🦄',color:'#f5c9ee',cost:70}
 ];
 let selected='bunny',unlocked=new Set(['bunny','kitten','frog','bear']),running=false,over=false,score=0,drops=0,best=Number(localStorage.jjBest||0),speed=4,frame=0;
-let player={x:115,y:330,vy:0,onGround:true},obstacles=[],gems=[];
+let player={x:115,y:320,vy:0,onGround:true},obstacles=[],gems=[];
 $('best').textContent=best;
 function drawPet(x,y,size,id){
  const p=pets.find(v=>v.id===id)||pets[0], fur=p.color;
@@ -126,23 +126,23 @@ function scenery(){
 }
 function draw(){
  scenery();
- obstacles.forEach(o=>{ctx.fillStyle='#f5a77e';ctx.beginPath();ctx.roundRect(o.x,350,o.w,40,10);ctx.fill();ctx.fillStyle='#fff0d8';ctx.beginPath();ctx.arc(o.x+o.w/2,362,5,0,7);ctx.fill()});
- gems.forEach(g=>{ctx.fillStyle='#69cddd';ctx.beginPath();ctx.arc(g.x,g.y,11,0,7);ctx.fill();ctx.fillStyle='white';ctx.beginPath();ctx.arc(g.x-3,g.y-4,3,0,7);ctx.fill()});
- drawPet(player.x,player.y,42,selected);
+ obstacles.forEach(o=>{ctx.save();ctx.fillStyle='#8a512e';ctx.beginPath();ctx.roundRect(o.x,345,o.w+18,38,15);ctx.fill();ctx.fillStyle='#bd8050';ctx.beginPath();ctx.roundRect(o.x+5,349,o.w+8,28,12);ctx.fill();ctx.strokeStyle='#e0b27a';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(o.x+12,348);ctx.lineTo(o.x+o.w+6,376);ctx.moveTo(o.x+o.w+4,348);ctx.lineTo(o.x+15,376);ctx.stroke();ctx.restore()});
+ gems.forEach((g,i)=>{let col=['#ff79a6','#ffc04f','#71c8ff'][i%3];ctx.save();ctx.translate(g.x,g.y);ctx.shadowColor=col;ctx.shadowBlur=12;ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(0,-15);ctx.quadraticCurveTo(18,-2,12,10);ctx.quadraticCurveTo(0,22,-12,10);ctx.quadraticCurveTo(-18,-2,0,-15);ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#ffffffcc';ctx.beginPath();ctx.ellipse(-4,-4,3,6,-.4,0,7);ctx.fill();ctx.restore()});
+ drawPet(player.x,player.y,55,selected);
  if(!running){ctx.fillStyle='#36556a';ctx.textAlign='center';ctx.font='bold 30px system-ui';ctx.fillText(over?'Lovely try!':'Ready, fluffy friend?',360,205);ctx.font='20px system-ui';ctx.fillText(over?'Press Play to try again':'Tap Play to begin',360,242)}
 }
 function update(){
- if(!running)return;frame++;speed=4+Math.min(score/180,5);player.vy+=.58;player.y+=player.vy;if(player.y>330){player.y=330;player.vy=0;player.onGround=true}
- if(frame%Math.max(48,85-Math.floor(speed*4))===0)obstacles.push({x:740,w:32+Math.random()*18});
+ if(!running)return;frame++;speed=4+Math.min(score/180,5);player.vy+=.58;player.y+=player.vy;if(player.y>320){player.y=320;player.vy=0;player.onGround=true}
+ if(frame%Math.max(58,105-Math.floor(speed*4))===0)obstacles.push({x:740,w:55+Math.random()*24});
  if(frame%105===0)gems.push({x:740,y:270+Math.random()*65});
  obstacles.forEach(o=>o.x-=speed);gems.forEach(g=>g.x-=speed);obstacles=obstacles.filter(o=>o.x>-60);gems=gems.filter(g=>g.x>-20);
- for(const o of obstacles){if(player.x+27>o.x&&player.x-27<o.x+o.w&&player.y+28>350){end();break}}
+ for(const o of obstacles){if(player.x+32>o.x&&player.x-32<o.x+o.w+18&&player.y+35>345){end();break}}
  gems=gems.filter(g=>{if(Math.abs(g.x-player.x)<35&&Math.abs(g.y-player.y)<38){drops++;$('drops').textContent=drops;unlock();return false}return true});
  score++;$('score').textContent=score;if(score>best){best=score;$('best').textContent=best;localStorage.jjBest=best}
  draw();requestAnimationFrame(update);
 }
 function jump(){if(running&&player.onGround){player.vy=-13;player.onGround=false}}
-function start(){score=0;frame=0;speed=4;obstacles=[];gems=[];player.y=330;player.vy=0;running=true;over=false;$('score').textContent='0';$('message').textContent='Go, fluffy friend!';$('play').textContent='↻ Restart';draw();requestAnimationFrame(update)}
+function start(){score=0;frame=0;speed=4;obstacles=[];gems=[];player.y=320;player.vy=0;running=true;over=false;$('score').textContent='0';$('message').textContent='Go, fluffy friend!';$('play').textContent='↻ Restart';draw();requestAnimationFrame(update)}
 function end(){running=false;over=true;$('message').textContent='You collected '+drops+' jelly drops. Great jumping!';$('play').textContent='↻ Play again';draw()}
 function unlock(){for(const p of pets){if(!unlocked.has(p.id)&&drops>=p.cost){unlocked.add(p.id);$('message').textContent='New friend discovered: '+p.name+'! ✨';renderBook();break}}}
 function renderBook(){$('cards').innerHTML='';pets.forEach(p=>{let el=document.createElement('div');el.className='pet'+(unlocked.has(p.id)?'':' locked');el.innerHTML='<div class="emoji">'+(unlocked.has(p.id)?p.emoji:'❔')+'</div><b>'+(unlocked.has(p.id)?p.name:'Mystery friend')+'</b><div class="small">'+(unlocked.has(p.id)?'Discovered!':p.cost+' jelly drops')+'</div>';el.onclick=()=>{if(unlocked.has(p.id)){selected=p.id;$('message').textContent=p.name+' is ready to jump!';draw()}};$('cards').appendChild(el)})}
