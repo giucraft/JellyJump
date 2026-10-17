@@ -8,34 +8,7 @@
 <link rel="manifest" href="./manifest.json">
 <link rel="icon" href="./icon.svg" type="image/svg+xml">
 <title>JellyJump</title>
-<style>
-:root{--ink:#36556a;--mint:#baf4e8;--coral:#ffadad;--cream:#fff9e9;--blue:#a9ddff}
-*{box-sizing:border-box}
-html,body{width:100%;height:100%;margin:0;overflow:hidden}
-body{font-family:ui-rounded,"Trebuchet MS",system-ui,sans-serif;color:var(--ink);background:#c9f4eb}
-.app{position:fixed;inset:0;width:100vw;height:100dvh;margin:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;overflow:hidden;text-align:center}
-.app h1,.app>.sub,.app>.small{display:none}
-.panel{position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0;border:0;border-radius:0;background:transparent;display:block}
-canvas{position:absolute;inset:0;display:block;width:100vw;height:100dvh;max-width:none;max-height:none;border:0;border-radius:0;background:#c9f4eb;touch-action:manipulation}
-.stats{position:absolute;z-index:2;top:max(10px,env(safe-area-inset-top));left:0;width:100%;display:flex;justify-content:space-around;font-weight:900;font-size:clamp(16px,3vw,22px);padding:9px 8px;color:#36556a;text-shadow:0 1px #fff}
-.actions{position:absolute;z-index:3;left:0;width:100%;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:0;padding:0 8px}
-#choices{position:absolute;bottom:max(12px,env(safe-area-inset-bottom))}
-#choices button{padding:9px 13px;font-size:clamp(12px,2.7vw,16px)}
-#choices button:focus{outline:3px solid #fff}
-.panel>.actions:not(#choices){position:absolute;bottom:max(66px,calc(env(safe-area-inset-bottom) + 58px));}
-#message{position:absolute;z-index:2;left:0;bottom:116px;width:100%;min-height:24px;margin:0;padding:0 12px;font-weight:900;color:#36556a;text-shadow:0 1px 2px #fff}
-button{border:2px solid #fff;border-radius:999px;padding:10px 15px;background:#72d4c5;color:#174e59;font:inherit;font-weight:800;box-shadow:0 3px 0 #49a99f;cursor:pointer}
-button.secondary{background:#ffe0a8;box-shadow:0 3px 0 #e9bf79}
-button:active{transform:translateY(2px);box-shadow:none}
-.collection{display:none;position:absolute;z-index:5;left:5%;right:5%;top:15%;max-height:70%;overflow:auto;text-align:left;margin:0;padding:12px;background:#f7fffcf2;border:2px solid white;border-radius:20px;box-shadow:0 8px 30px #36556a44}
-.collection h2{text-align:center;margin:4px}
-.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.pet{background:white;border-radius:14px;padding:9px;text-align:center;border:2px solid #e3f6ef}
-.pet .emoji{font-size:2rem}
-.locked{filter:grayscale(1);opacity:.5}
-.small{font-size:.82rem;color:#78909c;margin:10px 0 0}
-@media (max-height:560px){#choices{bottom:6px}#play,#jump,#collection{bottom:54px}#message{bottom:98px}button{padding:7px 11px}}
-</style>
+<style>:root{--ink:#75451f}*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden}body{font-family:ui-rounded,"Trebuchet MS",system-ui,sans-serif;color:var(--ink);background:#8ed5ff}.app{position:fixed;inset:0;width:100vw;height:100dvh;margin:0;padding:0;overflow:hidden}.app h1,.app>.sub,.app>.small{display:none}.panel{position:absolute;inset:0;width:100%;height:100%;padding:0;margin:0;border:0;background:transparent}canvas{position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;border:0;border-radius:0;touch-action:manipulation}.stats{position:absolute;z-index:3;top:14px;left:50%;transform:translateX(-50%);width:min(340px,42vw);display:flex;flex-direction:column;align-items:center;gap:5px;padding:0;color:#75451f;font-size:clamp(17px,2.8vw,27px);font-weight:900}.stats span{display:flex;align-items:center;justify-content:center;gap:13px;width:100%;padding:7px 18px;border:3px solid #fff;border-radius:24px;background:#fff9efed;box-shadow:0 5px 0 #bd8e5b66}.stats span:nth-child(2){width:58%;font-size:.8em;padding:5px 12px}.stats span:nth-child(3){display:none}#pause,#friendsTop{position:absolute;z-index:4;top:16px;width:64px;height:64px;border:4px solid white;border-radius:22px;background:linear-gradient(#ffb1b9,#f16f85);color:white;font-size:25px;box-shadow:0 5px 0 #b94e65}#pause{left:18px}#friendsTop{right:18px;background:linear-gradient(#ffe9bb,#ffbd85);color:#9a4c48;font-size:30px}#friendsTop span{display:block;font-size:12px}#message{position:absolute;z-index:3;left:50%;transform:translateX(-50%);top:19%;width:90%;text-align:center;font-weight:900;color:#75451f;text-shadow:0 1px 4px white}.actions{position:absolute;z-index:4;display:flex;align-items:center;justify-content:center;gap:8px;margin:0}#play{left:50%;bottom:18px;transform:translateX(-50%);min-width:170px;padding:16px 25px;border:5px solid white;border-radius:28px;background:linear-gradient(#ff9eaf,#ef6681);color:white;font-size:clamp(22px,3vw,32px);box-shadow:0 7px 0 #b64f67}#jump,#collection{display:none}#choices{left:16px;bottom:18px;justify-content:flex-start;gap:6px;max-width:42vw;flex-wrap:wrap}#choices button{display:flex;flex-direction:column;align-items:center;min-width:72px;padding:7px 9px;border:3px solid white;border-radius:18px;background:#fff5dfed;color:#75451f;font-size:clamp(11px,1.5vw,15px);box-shadow:0 4px 0 #c4935d}#choices button:before{font-size:25px;line-height:1.2}#choices button[data-pet="bunny"]:before{content:"🐰"}#choices button[data-pet="kitten"]:before{content:"🐱"}#choices button[data-pet="frog"]:before{content:"🐸"}#choices button[data-pet="bear"]:before{content:"🐻"}#goal{position:absolute;z-index:3;right:18px;bottom:24px;width:min(260px,25vw);padding:12px;border:3px solid white;border-radius:24px;background:#fff8e9ed;text-align:center;font-weight:900;color:#75451f}#goal .bar{height:13px;margin-top:7px;border-radius:20px;background:#e9d2ad;overflow:hidden}#goal .fill{height:100%;width:0;background:linear-gradient(90deg,#7bcf61,#49a94d)}.collection{display:none;position:absolute;z-index:8;left:5%;right:5%;top:12%;max-height:75%;overflow:auto;padding:14px;background:#fff8eaf5;border:3px solid white;border-radius:24px}.collection h2{text-align:center}.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.pet{background:white;border-radius:14px;padding:9px;text-align:center;border:2px solid #f5dfc4}.pet .emoji{font-size:2rem}.locked{filter:grayscale(1);opacity:.5}.small{font-size:.82rem;color:#78909c}@media(max-width:650px){#pause,#friendsTop{width:50px;height:50px;top:8px;left:8px;border-radius:16px}#friendsTop{left:auto;right:8px}#choices{left:5px;bottom:8px;max-width:44vw;gap:3px}#choices button{min-width:48px;padding:4px}#choices button:before{font-size:20px}#play{bottom:8px;min-width:105px;padding:11px;font-size:20px}#goal{right:5px;bottom:8px;width:25vw;padding:6px;font-size:10px}.stats{top:8px;width:38vw}.stats span{padding:5px 8px}#message{top:18%}}</style>
 </head>
 <body><main class="app">
 <h1>JellyJump ✨</h1><p class="sub">A fluffy little jumping adventure!</p>
