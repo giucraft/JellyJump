@@ -56,22 +56,68 @@ for(let i=0;i<70;i++){const g=new THREE.Group();for(let k=0;k<5;k++){const petal
 const pets=[{id:'bunny',name:'Bunny',emoji:'🐰',color:'#fff0d8',cost:0},{id:'kitten',name:'Kitten',emoji:'🐱',color:'#d9dce8',cost:0},{id:'frog',name:'Frog',emoji:'🐸',color:'#8ed46d',cost:0},{id:'bear',name:'Bear',emoji:'🐻',color:'#b98153',cost:0},{id:'fox',name:'Fox',emoji:'🦊',color:'#f6a05b',cost:8},{id:'lamb',name:'Lamb',emoji:'🐑',color:'#fff8ec',cost:16},{id:'axolotl',name:'Axolotl',emoji:'🩷',color:'#f5a9c6',cost:25},{id:'penguin',name:'Penguin',emoji:'🐧',color:'#8abbdc',cost:36},{id:'dragon',name:'Dragon',emoji:'🐲',color:'#9b91df',cost:50},{id:'unicorn',name:'Unicorn',emoji:'🦄',color:'#e8b4e4',cost:70}];
 let selected='bunny',unlocked=new Set(['bunny','kitten','frog','bear']),running=false,paused=false,over=false,score=0,drops=0,best=Number(localStorage.jjBest||0),speed=17,lane=0,targetLane=0,vy=0,onGround=true,jumpTime=0,spawnClock=0,gemClock=0,objects=[],clock=new THREE.Clock();
 $('best').textContent=best;
-function makePet(id){const p=pets.find(v=>v.id===id)||pets[0],fur=mat(p.color),g=new THREE.Group();function ball(name,x,y,z,sx,sy,sz,m){const o=new THREE.Mesh(new THREE.SphereGeometry(1,24,18),m);o.name=name;o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.castShadow=true;g.add(o);return o}
-ball('body',0,.82,0,.58,.68,.43,fur);ball('head',0,1.55,0,.63,.58,.55,fur);ball('muzzle',0,1.35,.49,.29,.2,.13,white);
-if(id==='bunny'){for(let s of [-1,1]){ball('ear',s*.3,2.22,0,.17,.48,.14,fur);ball('inner ear',s*.3,2.23,.12,.085,.34,.035,pink)}}
-if(id==='kitten'){for(let s of [-1,1]){const ear=new THREE.Mesh(new THREE.ConeGeometry(.24,.48,4),fur);ear.position.set(s*.39,2.03,0);ear.rotation.z=s*-.2;ear.castShadow=true;g.add(ear)}}
-if(id==='frog'){for(let s of [-1,1]){ball('eye stalk',s*.34,2.02,0,.2,.2,.2,fur);ball('eye white',s*.34,2.04,.15,.13,.14,.1,white)}}
-if(id==='bear'){for(let s of [-1,1]){ball('ear',s*.48,1.95,0,.2,.2,.16,fur);ball('ear pink',s*.48,1.95,.12,.1,.1,.04,pink)}}
-if(id==='fox'){for(let s of [-1,1]){const ear=new THREE.Mesh(new THREE.ConeGeometry(.22,.48,4),fur);ear.position.set(s*.38,2.02,0);g.add(ear)}}
-if(id==='lamb'){for(let i=0;i<7;i++)ball('wool',Math.cos(i)*.5,1.7+Math.sin(i)*.22,Math.sin(i)*.4,.23,.23,.23,white)}
-if(id==='axolotl'){for(let s of [-1,1]){ball('gill',s*.7,1.7,0,.13,.32,.13,pink);ball('gill',s*.78,1.65,.12,.1,.24,.1,pink)}}
-if(id==='penguin'){ball('belly',0,.85,.38,.4,.5,.13,white)}
-if(id==='dragon'){for(let s of [-1,1]){const horn=new THREE.Mesh(new THREE.ConeGeometry(.13,.42,8),mat('#79c987'));horn.position.set(s*.38,2.1,0);g.add(horn)}}
-if(id==='unicorn'){const horn=new THREE.Mesh(new THREE.ConeGeometry(.11,.48,8),mat('#ffd36e'));horn.position.set(0,2.18,.1);horn.rotation.x=-.2;g.add(horn)}
-if(id!=='frog'){for(let s of [-1,1])ball('eye',s*.23,1.64,.49,.065,.09,.055,dark)}
-ball('nose',0,1.4,.62,.07,.05,.04,pink);
-for(let s of [-1,1])ball('cheek',s*.39,1.35,.44,.12,.07,.035,pink);
-const feet=[];for(let s of [-1,1])feet.push(ball('foot',s*.33,.22,.13,.23,.16,.28,fur));g.userData.feet=feet;g.userData.fur=fur;return g}
+function makePet(id){
+const p=pets.find(v=>v.id===id)||pets[0],fur=new THREE.MeshStandardMaterial({color:p.color,roughness:1}),g=new THREE.Group();
+const cream=mat('#fff5e7'),dark=mat('#39404d'),pink=mat('#f2a9bd'),paw=mat(p.color);
+function ball(name,x,y,z,sx,sy,sz,m){const o=new THREE.Mesh(new THREE.SphereGeometry(1,24,18),m);o.name=name;o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.castShadow=true;g.add(o);return o}
+function ear(x,y,z,sx,sy,sz,m=fur){return ball('ear',x,y,z,sx,sy,sz,m)}
+// Soft toy proportions: a plump little body, oversized head and stubby paws.
+ball('plush body',0,.78,0,.53,.62,.43,fur);
+ball('big plush head',0,1.55,0,.68,.62,.59,fur);
+for(let s of [-1,1]){
+ ball('arm',s*.53,.91,.02,.22,.39,.23,fur);
+ ball('paw',s*.56,.62,.08,.22,.19,.22,paw);
+ ball('foot',s*.32,.2,.13,.27,.17,.31,fur);
+ ball('paw pad',s*.32,.105,.34,.12,.035,.08,pink);
+}
+// Fuzzy little tufts on the back and crown catch the light as the friend runs.
+for(let i=0;i<13;i++){
+ const a=(i/13)*Math.PI*2, x=Math.cos(a)*.48, y=1.53+Math.sin(a)*.43;
+ ball('head fluff',x,y,-.43,.105,.12,.09,fur);
+}
+for(let i=0;i<8;i++){
+ const a=(i/8)*Math.PI*2;
+ ball('body fluff',Math.cos(a)*.39,.78+Math.sin(a)*.39,-.29,.10,.12,.09,fur);
+}
+if(id==='bunny'){
+ for(let s of [-1,1]){ear(s*.29,2.28,-.02,.18,.48,.15);ear(s*.29,2.28,.105,.09,.34,.035,pink)}
+ ball('cotton tail',0,.73,-.48,.24,.24,.22,cream);
+}else if(id==='kitten'){
+ for(let s of [-1,1]){const e=new THREE.Mesh(new THREE.ConeGeometry(.25,.5,5),fur);e.position.set(s*.43,2.02,0);e.rotation.z=s*-.18;e.castShadow=true;g.add(e);ear(s*.43,2.02,.11,.12,.24,.035,pink)}
+ const tail=new THREE.Mesh(new THREE.TorusGeometry(.29,.105,10,20,Math.PI*1.6),fur);tail.position.set(.28,.88,-.45);tail.rotation.set(Math.PI/2,0,-.4);g.add(tail);
+}else if(id==='frog'){
+ for(let s of [-1,1]){ball('eye bump',s*.36,2.03,0,.22,.23,.22,fur);ball('eye white',s*.36,2.05,.15,.15,.16,.11,cream);ball('pupil',s*.36,2.05,.245,.065,.085,.035,dark)}
+ ball('tiny smile',0,1.32,.56,.16,.035,.025,dark);
+}else if(id==='bear'){
+ for(let s of [-1,1]){ear(s*.5,1.99,0,.23,.23,.17);ear(s*.5,1.99,.12,.12,.12,.045,pink)}
+ ball('round tail',0,.72,-.46,.19,.19,.17,fur);
+}else if(id==='fox'){
+ for(let s of [-1,1]){const e=new THREE.Mesh(new THREE.ConeGeometry(.23,.52,5),fur);e.position.set(s*.42,2.04,0);g.add(e)}
+ ball('fluffy tail',.43,.75,-.55,.27,.3,.34,cream);
+}else if(id==='lamb'){
+ for(let i=0;i<9;i++)ball('wool curl',Math.cos(i*.7)*.47,1.58+Math.sin(i*.7)*.35,-.18,.19,.2,.17,cream);
+ ball('wool tail',0,.73,-.47,.2,.2,.2,cream);
+}else if(id==='axolotl'){
+ for(let s of [-1,1])for(let j=0;j<3;j++)ball('gill',s*(.57+j*.08),1.68+(j-1)*.12,-.02,.11,.13,.1,pink);
+ ball('tail fin',0,.8,-.62,.22,.35,.12,pink);
+}else if(id==='penguin'){
+ ball('back patch',0,.93,-.43,.37,.48,.035,dark);
+ ball('belly',0,.83,.39,.4,.5,.14,cream);
+}else if(id==='dragon'){
+ for(let s of [-1,1]){const h=new THREE.Mesh(new THREE.ConeGeometry(.14,.42,8),mat('#79c987'));h.position.set(s*.38,2.1,0);g.add(h)}
+ ball('little tail',0,.66,-.57,.13,.16,.36,fur);
+}else if(id==='unicorn'){
+ const h=new THREE.Mesh(new THREE.ConeGeometry(.11,.48,8),mat('#ffd36e'));h.position.set(0,2.18,.1);h.rotation.x=-.2;g.add(h);
+ for(let i=0;i<3;i++)ball('mane',-.18+i*.18,1.96,-.12,.12,.23,.13,mat(['#f4a9c8','#a9dff2','#d2b1f2'][i]));
+ ball('tail',0,.7,-.55,.17,.19,.32,mat('#d9b6ec'));
+}
+// Face details are kept on the front of each plush friend.
+if(id!=='frog'){for(let s of [-1,1]){ball('eye',s*.25,1.65,.52,.07,.095,.045,dark);ball('eye shine',s*.27,1.69,.56,.025,.03,.018,cream)}}
+ball('muzzle',0,1.36,.52,.3,.2,.14,cream);
+ball('nose',0,1.42,.655,.075,.055,.04,pink);
+for(let s of [-1,1])ball('cheek',s*.4,1.35,.47,.12,.075,.035,pink);
+g.userData.feet=g.children.filter(o=>o.name==='foot');return g
+}
 let player=makePet(selected);player.rotation.y=Math.PI;player.position.set(0,0,3);scene.add(player);
 function changePet(id){selected=id;scene.remove(player);player=makePet(id);player.rotation.y=Math.PI;player.position.set(lane*2,0,3);scene.add(player);document.querySelectorAll('[data-pet]').forEach(b=>b.classList.toggle('active',b.dataset.pet===id));}
 function makeObstacle(l,z){const g=new THREE.Group();const log=new THREE.Mesh(new THREE.CylinderGeometry(.38,.38,1.55,12),wood);log.rotation.z=Math.PI/2;log.position.y=.43;log.castShadow=true;g.add(log);const cap=mat('#d69a65');for(let s of [-1,1]){const c=new THREE.Mesh(new THREE.CircleGeometry(.32,12),cap);c.rotation.y=s*Math.PI/2;c.position.set(s*.78,.43,0);g.add(c)}g.position.set(l*2,0,z);scene.add(g);objects.push({group:g,type:'obstacle',lane:l,hit:false})}
