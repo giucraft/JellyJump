@@ -72,8 +72,8 @@ if(id!=='frog'){for(let s of [-1,1])ball('eye',s*.23,1.64,.49,.065,.09,.055,dark
 ball('nose',0,1.4,.62,.07,.05,.04,pink);
 for(let s of [-1,1])ball('cheek',s*.39,1.35,.44,.12,.07,.035,pink);
 const feet=[];for(let s of [-1,1])feet.push(ball('foot',s*.33,.22,.13,.23,.16,.28,fur));g.userData.feet=feet;g.userData.fur=fur;return g}
-let player=makePet(selected);player.rotation.y=Math.PI;player.position.set(0,0,3);scene.add(player);
-function changePet(id){selected=id;scene.remove(player);player=makePet(id);player.rotation.y=Math.PI;player.position.set(lane*2,0,3);scene.add(player);document.querySelectorAll('[data-pet]').forEach(b=>b.classList.toggle('active',b.dataset.pet===id));}
+let player=makePet(selected);player.position.set(0,0,3);scene.add(player);
+function changePet(id){selected=id;scene.remove(player);player=makePet(id);player.position.set(lane*2,0,3);scene.add(player);document.querySelectorAll('[data-pet]').forEach(b=>b.classList.toggle('active',b.dataset.pet===id));}
 function makeObstacle(l,z){const g=new THREE.Group();const log=new THREE.Mesh(new THREE.CylinderGeometry(.38,.38,1.55,12),wood);log.rotation.z=Math.PI/2;log.position.y=.43;log.castShadow=true;g.add(log);const cap=mat('#d69a65');for(let s of [-1,1]){const c=new THREE.Mesh(new THREE.CircleGeometry(.32,12),cap);c.rotation.y=s*Math.PI/2;c.position.set(s*.78,.43,0);g.add(c)}g.position.set(l*2,0,z);scene.add(g);objects.push({group:g,type:'obstacle',lane:l,hit:false})}
 function makeGem(l,z){const m=new THREE.Mesh(new THREE.OctahedronGeometry(.43,1),mat('#ff76a8',.25));m.position.set(l*2,1.2,z);m.castShadow=true;scene.add(m);objects.push({group:m,type:'gem',lane:l,hit:false})}
 function spawn(){const l=Math.floor(Math.random()*3)-1;makeObstacle(l,-58-Math.random()*8);if(Math.random()<.8)makeGem(Math.floor(Math.random()*3)-1,-68)}
