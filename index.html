@@ -10,15 +10,14 @@
 <title>JellyJump</title>
 <style>
 :root{--ink:#36556a;--mint:#baf4e8;--coral:#ffadad;--cream:#fff9e9;--blue:#a9ddff}
-*{box-sizing:border-box}body{margin:0;font-family:ui-rounded,"Trebuchet MS",system-ui,sans-serif;color:var(--ink);background:linear-gradient(160deg,#d9fbf2,#d9eaff 65%,#fff0d8);min-height:100svh;display:grid;place-items:center;padding:14px}
-.app{width:min(100%,520px);background:#ffffffc9;border:3px solid #fff;border-radius:30px;padding:16px;box-shadow:0 14px 40px #668da333;text-align:center}
+*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden}body{font-family:ui-rounded,'Trebuchet MS',system-ui,sans-serif;color:var(--ink);background:linear-gradient(160deg,#d9fbf2,#d9eaff 65%,#fff0d8);min-height:100svh}.app{width:100%;height:100dvh;min-height:100svh;background:#ffffffb8;padding:clamp(8px,2vw,18px);display:flex;flex-direction:column;text-align:center;overflow:auto}
 h1{font-size:clamp(2.1rem,8vw,3rem);margin:0;color:#399b9a;letter-spacing:-2px;text-shadow:2px 3px #fff}
-.sub{margin:0 0 12px;color:#678397}.panel{background:#f7fffc;border:2px solid #fff;border-radius:22px;padding:12px}
-canvas{display:block;width:100%;height:auto;aspect-ratio:360/230;border-radius:16px;background:#c9f4eb;touch-action:manipulation}
-.stats{display:flex;justify-content:space-around;font-weight:800;padding:9px 0}.actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px}
+.sub{margin:0 0 12px;color:#678397}.panel{flex:1;min-height:0;display:flex;flex-direction:column;background:#f7fffc;border:2px solid #fff;border-radius:18px;padding:clamp(6px,1.5vw,12px)}
+canvas{display:block;width:100%;height:100%;flex:1;min-height:180px;border-radius:16px;background:#c9f4eb;touch-action:manipulation}
+.stats{display:flex;justify-content:space-around;font-weight:800;padding:7px 0;flex:none}.actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px;flex:none}
 button{border:0;border-radius:999px;padding:11px 16px;background:#72d4c5;color:#174e59;font:inherit;font-weight:800;box-shadow:0 3px 0 #49a99f;cursor:pointer}
 button.secondary{background:#ffe0a8;box-shadow:0 3px 0 #e9bf79}button:active{transform:translateY(2px);box-shadow:none}
-#message{min-height:24px;font-weight:700;margin:8px 0 0}.small{font-size:.82rem;color:#78909c;margin:10px 0 0}
+#message{min-height:24px;font-weight:700;margin:6px 0 0;flex:none}.small{font-size:.82rem;color:#78909c;margin:10px 0 0}
 .collection{display:none;text-align:left;margin-top:12px}.collection h2{text-align:center;margin:4px}.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.pet{background:white;border-radius:14px;padding:9px;text-align:center;border:2px solid #e3f6ef}.pet .emoji{font-size:2rem}.locked{filter:grayscale(1);opacity:.5}
 </style>
 </head>
@@ -57,16 +56,31 @@ let selected='bunny',unlocked=new Set(['bunny','kitten','frog','bear']),running=
 let player={x:115,y:330,vy:0,onGround:true},obstacles=[],gems=[];
 $('best').textContent=best;
 function drawPet(x,y,size,id){
- const p=pets.find(v=>v.id===id)||pets[0];ctx.save();ctx.translate(x,y);
- // soft fuzzy silhouette made from little overlapping tufts
- ctx.fillStyle=p.color;ctx.strokeStyle='#ffffff';ctx.lineWidth=5;
- ctx.beginPath();ctx.ellipse(0,0,size*.78,size*.67,0,0,Math.PI*2);ctx.fill();ctx.stroke();
- for(let i=0;i<22;i++){let a=i*Math.PI*2/22;ctx.beginPath();ctx.arc(Math.cos(a)*size*.72,Math.sin(a)*size*.58,size*.16,0,Math.PI*2);ctx.fill()}
- // ears
- if(id==='bunny'){ctx.beginPath();ctx.ellipse(-size*.35,-size*.72,size*.2,size*.48,-.25,0,Math.PI*2);ctx.ellipse(size*.35,-size*.72,size*.2,size*.48,.25,0,Math.PI*2);ctx.fill();ctx.stroke()}
- if(id==='kitten'){ctx.beginPath();ctx.moveTo(-size*.62,-size*.35);ctx.lineTo(-size*.45,-size*.95);ctx.lineTo(-size*.08,-size*.52);ctx.moveTo(size*.62,-size*.35);ctx.lineTo(size*.45,-size*.95);ctx.lineTo(size*.08,-size*.52);ctx.fill();ctx.stroke()}
- ctx.fillStyle='#40546a';ctx.beginPath();ctx.arc(-size*.25,-size*.05,size*.075,0,7);ctx.arc(size*.25,-size*.05,size*.075,0,7);ctx.fill();
- ctx.strokeStyle='#40546a';ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,size*.12,size*.16,.15,Math.PI-.15);ctx.stroke();
+ const p=pets.find(v=>v.id===id)||pets[0], fur=p.color;
+ ctx.save();ctx.translate(x,y);ctx.lineJoin='round';
+ const oval=(x,y,rx,ry,color,stroke='#fff',lw=4)=>{ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();if(stroke){ctx.lineWidth=lw;ctx.strokeStyle=stroke;ctx.stroke()}};
+ // Feet and arms
+ oval(-size*.4,size*.5,size*.25,size*.17,fur);oval(size*.4,size*.5,size*.25,size*.17,fur);
+ ctx.strokeStyle=fur;ctx.lineWidth=size*.23;ctx.beginPath();ctx.moveTo(-size*.48,0);ctx.lineTo(-size*.72,size*.24);ctx.moveTo(size*.48,0);ctx.lineTo(size*.72,size*.24);ctx.stroke();ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.stroke();
+ // Distinct ears and head shapes
+ if(id==='bunny'){ctx.save();ctx.rotate(-.16);oval(-size*.34,-size*.82,size*.2,size*.53,fur);oval(-size*.34,-size*.82,size*.095,size*.38,'#f4b8c7',null);ctx.restore();ctx.save();ctx.rotate(.16);oval(size*.34,-size*.82,size*.2,size*.53,fur);oval(size*.34,-size*.82,size*.095,size*.38,'#f4b8c7',null);ctx.restore()}
+ if(id==='kitten'){ctx.fillStyle=fur;ctx.strokeStyle='#fff';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(-size*.68,-size*.35);ctx.lineTo(-size*.57,-size*.98);ctx.lineTo(-size*.28,-size*.62);ctx.quadraticCurveTo(0,-size*.8,size*.28,-size*.62);ctx.lineTo(size*.57,-size*.98);ctx.lineTo(size*.68,-size*.35);ctx.closePath();ctx.fill();ctx.stroke();oval(-size*.49,-size*.61,size*.07,size*.12,'#efb5c5',null);oval(size*.49,-size*.61,size*.07,size*.12,'#efb5c5',null)}
+ if(id==='frog'){oval(-size*.36,-size*.61,size*.22,size*.24,fur);oval(size*.36,-size*.61,size*.22,size*.24,fur);oval(-size*.36,-size*.63,size*.11,size*.13,'#fff',null);oval(size*.36,-size*.63,size*.11,size*.13,'#fff',null)}
+ if(id==='bear'){oval(-size*.49,-size*.65,size*.22,size*.22,fur);oval(size*.49,-size*.65,size*.22,size*.22,fur);oval(-size*.49,-size*.65,size*.1,size*.1,'#eaaeb2',null);oval(size*.49,-size*.65,size*.1,size*.1,'#eaaeb2',null)}
+ // Plush body and round head
+ oval(0,size*.06,size*.69,size*.67,fur);oval(0,-size*.28,size*.67,size*.61,fur);
+ if(id==='bunny')oval(0,-size*.01,size*.32,size*.24,'#fff7ed',null);
+ if(id==='kitten')oval(0,-size*.01,size*.34,size*.23,'#f0edf4',null);
+ if(id==='frog')oval(0,size*.02,size*.39,size*.29,'#d9f3b9',null);
+ if(id==='bear')oval(0,-size*.01,size*.34,size*.25,'#f2d2ae',null);
+ // Eyes, nose, smile and rosy cheeks
+ oval(-size*.23,-size*.34,size*.055,size*.075,'#35495b',null);oval(size*.23,-size*.34,size*.055,size*.075,'#35495b',null);
+ oval(-size*.25,-size*.37,size*.018,size*.022,'#fff',null);oval(size*.21,-size*.37,size*.018,size*.022,'#fff',null);
+ if(id==='kitten'){ctx.fillStyle='#e99bab';ctx.beginPath();ctx.moveTo(-size*.07,-size*.17);ctx.lineTo(size*.07,-size*.17);ctx.lineTo(0,-size*.09);ctx.fill()}else{oval(0,-size*.15,size*.06,size*.045,id==='frog'?'#5caa68':'#d98f9b',null)}
+ ctx.strokeStyle='#536477';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(0,-size*.1);ctx.lineTo(0,-size*.02);ctx.quadraticCurveTo(-size*.12,size*.1,-size*.2,-size*.01);ctx.moveTo(0,-size*.02);ctx.quadraticCurveTo(size*.12,size*.1,size*.2,-size*.01);ctx.stroke();
+ oval(-size*.4,-size*.12,size*.1,size*.06,'#f4b5bd',null);oval(size*.4,-size*.12,size*.1,size*.06,'#f4b5bd',null);
+ // A few little tufts give the friends a soft plush outline
+ ctx.fillStyle=fur;for(let i=0;i<9;i++){const ang=Math.PI+i*Math.PI/8;ctx.beginPath();ctx.arc(Math.cos(ang)*size*.62,Math.sin(ang)*size*.57-size*.02,size*.09,0,Math.PI*2);ctx.fill()}
  ctx.restore();
 }
 function scenery(){
