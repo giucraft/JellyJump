@@ -4,125 +4,103 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="theme-color" content="#9cefe6">
-<meta name="description" content="A fluffy little jumping adventure.">
+<meta name="description" content="A fluffy little 3D jumping adventure.">
 <link rel="manifest" href="./manifest.json">
 <link rel="icon" href="./icon.svg" type="image/svg+xml">
-<title>JellyJump</title>
-<style>:root{--ink:#75451f}*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden}body{font-family:ui-rounded,"Trebuchet MS",system-ui,sans-serif;color:var(--ink);background:#8ed5ff}.app{position:fixed;inset:0;width:100vw;height:100dvh;margin:0;padding:0;overflow:hidden}.app h1,.app>.sub,.app>.small{display:none}.panel{position:absolute;inset:0;width:100%;height:100%;padding:0;margin:0;border:0;background:transparent}canvas{position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;border:0;border-radius:0;touch-action:manipulation}.stats{position:absolute;z-index:3;top:14px;left:50%;transform:translateX(-50%);width:min(340px,42vw);display:flex;flex-direction:column;align-items:center;gap:5px;padding:0;color:#75451f;font-size:clamp(17px,2.8vw,27px);font-weight:900}.stats span{display:flex;align-items:center;justify-content:center;gap:13px;width:100%;padding:7px 18px;border:3px solid #fff;border-radius:24px;background:#fff9efed;box-shadow:0 5px 0 #bd8e5b66}.stats span:nth-child(2){width:58%;font-size:.8em;padding:5px 12px}.stats span:nth-child(3){display:none}#pause,#friendsTop{position:absolute;z-index:4;top:16px;width:64px;height:64px;border:4px solid white;border-radius:22px;background:linear-gradient(#ffb1b9,#f16f85);color:white;font-size:25px;box-shadow:0 5px 0 #b94e65}#pause{left:18px}#friendsTop{right:18px;background:linear-gradient(#ffe9bb,#ffbd85);color:#9a4c48;font-size:30px}#friendsTop span{display:block;font-size:12px}#message{position:absolute;z-index:3;left:50%;transform:translateX(-50%);top:19%;width:90%;text-align:center;font-weight:900;color:#75451f;text-shadow:0 1px 4px white}.actions{position:absolute;z-index:4;display:flex;align-items:center;justify-content:center;gap:8px;margin:0}#play{left:50%;bottom:18px;transform:translateX(-50%);min-width:170px;padding:16px 25px;border:5px solid white;border-radius:28px;background:linear-gradient(#ff9eaf,#ef6681);color:white;font-size:clamp(22px,3vw,32px);box-shadow:0 7px 0 #b64f67}#jump,#collection{display:none}#choices{left:16px;bottom:18px;justify-content:flex-start;gap:6px;max-width:42vw;flex-wrap:wrap}#choices button{display:flex;flex-direction:column;align-items:center;min-width:72px;padding:7px 9px;border:3px solid white;border-radius:18px;background:#fff5dfed;color:#75451f;font-size:clamp(11px,1.5vw,15px);box-shadow:0 4px 0 #c4935d}#choices button:before{font-size:25px;line-height:1.2}#choices button[data-pet="bunny"]:before{content:"🐰"}#choices button[data-pet="kitten"]:before{content:"🐱"}#choices button[data-pet="frog"]:before{content:"🐸"}#choices button[data-pet="bear"]:before{content:"🐻"}#goal{position:absolute;z-index:3;right:18px;bottom:24px;width:min(260px,25vw);padding:12px;border:3px solid white;border-radius:24px;background:#fff8e9ed;text-align:center;font-weight:900;color:#75451f}#goal .bar{height:13px;margin-top:7px;border-radius:20px;background:#e9d2ad;overflow:hidden}#goal .fill{height:100%;width:0;background:linear-gradient(90deg,#7bcf61,#49a94d)}.collection{display:none;position:absolute;z-index:8;left:5%;right:5%;top:12%;max-height:75%;overflow:auto;padding:14px;background:#fff8eaf5;border:3px solid white;border-radius:24px}.collection h2{text-align:center}.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.pet{background:white;border-radius:14px;padding:9px;text-align:center;border:2px solid #f5dfc4}.pet .emoji{font-size:2rem}.locked{filter:grayscale(1);opacity:.5}.small{font-size:.82rem;color:#78909c}@media(max-width:650px){#pause,#friendsTop{width:50px;height:50px;top:8px;left:8px;border-radius:16px}#friendsTop{left:auto;right:8px}#choices{left:5px;bottom:8px;max-width:44vw;gap:3px}#choices button{min-width:48px;padding:4px}#choices button:before{font-size:20px}#play{bottom:8px;min-width:105px;padding:11px;font-size:20px}#goal{right:5px;bottom:8px;width:25vw;padding:6px;font-size:10px}.stats{top:8px;width:38vw}.stats span{padding:5px 8px}#message{top:18%}}</style>
+<title>JellyJump 3D</title>
+<style>
+*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden}body{font-family:ui-rounded,"Trebuchet MS",system-ui,sans-serif;background:#9bdfff;color:#75451f}.app{position:fixed;inset:0;overflow:hidden}#world{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}.hud{position:absolute;inset:0;pointer-events:none}.stats{position:absolute;top:14px;left:50%;transform:translateX(-50%);display:flex;gap:8px}.stats span{padding:8px 16px;border:3px solid white;border-radius:22px;background:#fff1e7eF;box-shadow:0 4px 0 #bd8e5b66;font-weight:900;font-size:clamp(15px,2vw,23px);white-space:nowrap}button{font-family:inherit;font-weight:900;cursor:pointer;pointer-events:auto}#pause,#friendsTop{position:absolute;top:15px;width:58px;height:58px;border:4px solid white;border-radius:20px;background:linear-gradient(#ffb1b9,#f16f85);color:white;font-size:24px;box-shadow:0 5px 0 #b94e65}#pause{left:16px}#friendsTop{right:16px;background:linear-gradient(#ffe9bb,#ffbd85);color:#9a4c48}#friendsTop small{display:block;font-size:10px}#message{position:absolute;top:17%;left:50%;transform:translateX(-50%);width:90%;text-align:center;font-size:clamp(18px,3vw,28px);font-weight:1000;color:#75451f;text-shadow:0 2px 5px white}.bottom{position:absolute;bottom:15px;left:0;right:0;display:flex;justify-content:center;align-items:end;gap:12px;padding:0 14px}#play{min-width:170px;padding:15px 26px;border:5px solid white;border-radius:26px;background:linear-gradient(#ff9eaf,#ef6681);color:white;font-size:clamp(21px,3vw,30px);box-shadow:0 7px 0 #b64f67}#choices{position:absolute;left:14px;bottom:15px;display:flex;gap:6px;flex-wrap:wrap;max-width:38vw}#choices button{min-width:67px;padding:7px 9px;border:3px solid white;border-radius:17px;background:#fff5dfed;color:#75451f;box-shadow:0 4px 0 #c4935d;font-size:13px}#choices button.active{background:#c9f2d2;outline:3px solid #fff}#choices button b{display:block;font-size:22px}.book{display:none;position:absolute;z-index:5;left:5%;right:5%;top:13%;max-height:72%;overflow:auto;padding:15px;background:#fff8eaf5;border:3px solid white;border-radius:24px;pointer-events:auto}.book h2{text-align:center;margin:4px}.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.pet{background:white;border-radius:14px;padding:10px;text-align:center;border:2px solid #f5dfc4;cursor:pointer}.pet .emoji{font-size:30px}.locked{filter:grayscale(1);opacity:.5}.hint{position:absolute;bottom:93px;left:50%;transform:translateX(-50%);font-size:13px;font-weight:800;color:#fff;text-shadow:0 2px 4px #41677a;white-space:nowrap}.progress{position:absolute;right:16px;bottom:18px;width:min(210px,23vw);padding:10px 12px;border:3px solid white;border-radius:19px;background:#fff8e9ed;text-align:center;font-size:13px;font-weight:900}.bar{height:10px;margin-top:6px;border-radius:20px;background:#e9d2ad;overflow:hidden}.fill{height:100%;width:0;background:linear-gradient(90deg,#7bcf61,#49a94d)}@media(max-width:650px){#pause,#friendsTop{width:47px;height:47px;top:8px;left:8px;border-radius:15px}#friendsTop{left:auto;right:8px}.stats{top:8px;gap:4px}.stats span{padding:6px 9px;font-size:14px}#choices{left:5px;bottom:8px;max-width:43vw;gap:3px}#choices button{min-width:49px;padding:4px;font-size:10px}#choices button b{font-size:18px}#play{min-width:112px;padding:11px;font-size:20px}.bottom{bottom:8px}.progress{right:5px;bottom:8px;width:25vw;padding:6px;font-size:10px}.hint{bottom:65px;font-size:11px}}
+</style>
 </head>
 <body><main class="app">
-<h1>JellyJump ✨</h1><p class="sub">A fluffy little jumping adventure!</p>
-<section class="panel">
-<canvas id="game" width="720" height="460" aria-label="JellyJump game. Tap or press space to jump."></canvas>
-<button id="pause" aria-label="Pause">Ⅱ</button><button id="friendsTop">📖<span>Friends</span></button><div class="stats"><span>⭐ <b id="score">0</b></span><span>💧 <b id="drops">0</b></span><span>🏆 <b id="best">0</b></span></div>
+<canvas id="world" aria-label="JellyJump 3D endless runner"></canvas>
+<div class="hud">
+<button id="pause" aria-label="Pause">Ⅱ</button><button id="friendsTop">📖<small>Friends</small></button>
+<div class="stats"><span>⭐ <b id="score">0</b></span><span>💧 <b id="drops">0</b></span><span>🏆 <b id="best">0</b></span></div>
 <div id="message">Choose a fluffy friend and tap Play!</div>
-<div class="actions">
-<button id="play">▶ Play</button><button id="jump" class="secondary">⬆ Jump</button><button id="collection">📖 Friends</button>
+<div class="hint">← → change lanes · Space / ↑ jump · Swipe on mobile</div>
+<div class="bottom"><button id="play">▶ Play</button></div>
+<div id="choices">
+<button data-pet="bunny" class="active"><b>🐰</b>Bunny</button><button data-pet="kitten"><b>🐱</b>Kitten</button><button data-pet="frog"><b>🐸</b>Frog</button><button data-pet="bear"><b>🐻</b>Bear</button>
 </div>
-<div class="actions" id="choices">
-<button data-pet="bunny" class="secondary">🐰 Bunny</button><button data-pet="kitten" class="secondary">🐱 Kitten</button><button data-pet="frog" class="secondary">🐸 Frog</button><button data-pet="bear" class="secondary">🐻 Bear</button>
-</div>
-<div class="collection" id="book"><h2>✨ Friend book</h2><p class="small">Collect jelly drops during runs to discover new friends!</p><div class="cards" id="cards"></div></div>
-</section><p class="small">Tip: tap the game, press Jump, or use the space bar.</p>
-</main>
+<div class="progress">✨ Friend discoveries<div id="goalCount">0 / 100</div><div class="bar"><div class="fill" id="goalFill"></div></div></div>
+<div class="book" id="book"><h2>✨ Friend book</h2><p style="text-align:center">Collect jelly drops to discover new friends!</p><div class="cards" id="cards"></div></div>
+</div></main>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 <script>
 (()=>{
-const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
-const $=id=>document.getElementById(id);
-const pets=[
-{id:'bunny',name:'Bunny',emoji:'🐰',color:'#fff0d8',cost:0},
-{id:'kitten',name:'Kitten',emoji:'🐱',color:'#d9dce8',cost:0},
-{id:'frog',name:'Frog',emoji:'🐸',color:'#bce8b0',cost:0},
-{id:'bear',name:'Bear',emoji:'🐻',color:'#d9a879',cost:0},
-{id:'fox',name:'Fox',emoji:'🦊',color:'#f6b078',cost:8},
-{id:'lamb',name:'Lamb',emoji:'🐑',color:'#fff8ec',cost:16},
-{id:'axolotl',name:'Axolotl',emoji:'🩷',color:'#ffc4d8',cost:25},
-{id:'penguin',name:'Penguin',emoji:'🐧',color:'#b9d9ee',cost:36},
-{id:'dragon',name:'Dragon',emoji:'🐲',color:'#b8b2ed',cost:50},
-{id:'unicorn',name:'Unicorn',emoji:'🦄',color:'#f5c9ee',cost:70}
-];
-let selected='bunny',unlocked=new Set(['bunny','kitten','frog','bear']),running=false,over=false,score=0,drops=0,best=Number(localStorage.jjBest||0),speed=4,frame=0;
-let player={x:115,y:320,vy:0,onGround:true},obstacles=[],gems=[];
-$('best').textContent=best;$('jump').style.display='none';
-function drawPet(x,y,size,id){
- const p=pets.find(v=>v.id===id)||pets[0], fur=p.color;
- ctx.save();ctx.translate(x,y);ctx.lineJoin='round';
- const oval=(x,y,rx,ry,color,stroke='#fff',lw=4)=>{ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();if(stroke){ctx.lineWidth=lw;ctx.strokeStyle=stroke;ctx.stroke()}};
- // Feet and arms
- oval(-size*.4,size*.5,size*.25,size*.17,fur);oval(size*.4,size*.5,size*.25,size*.17,fur);
- ctx.strokeStyle=fur;ctx.lineWidth=size*.23;ctx.beginPath();ctx.moveTo(-size*.48,0);ctx.lineTo(-size*.72,size*.24);ctx.moveTo(size*.48,0);ctx.lineTo(size*.72,size*.24);ctx.stroke();ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.stroke();
- // Distinct ears and head shapes
- if(id==='bunny'){ctx.save();ctx.rotate(-.16);oval(-size*.34,-size*.82,size*.2,size*.53,fur);oval(-size*.34,-size*.82,size*.095,size*.38,'#f4b8c7',null);ctx.restore();ctx.save();ctx.rotate(.16);oval(size*.34,-size*.82,size*.2,size*.53,fur);oval(size*.34,-size*.82,size*.095,size*.38,'#f4b8c7',null);ctx.restore()}
- if(id==='kitten'){ctx.fillStyle=fur;ctx.strokeStyle='#fff';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(-size*.68,-size*.35);ctx.lineTo(-size*.57,-size*.98);ctx.lineTo(-size*.28,-size*.62);ctx.quadraticCurveTo(0,-size*.8,size*.28,-size*.62);ctx.lineTo(size*.57,-size*.98);ctx.lineTo(size*.68,-size*.35);ctx.closePath();ctx.fill();ctx.stroke();oval(-size*.49,-size*.61,size*.07,size*.12,'#efb5c5',null);oval(size*.49,-size*.61,size*.07,size*.12,'#efb5c5',null)}
- if(id==='frog'){oval(-size*.36,-size*.61,size*.22,size*.24,fur);oval(size*.36,-size*.61,size*.22,size*.24,fur);oval(-size*.36,-size*.63,size*.11,size*.13,'#fff',null);oval(size*.36,-size*.63,size*.11,size*.13,'#fff',null)}
- if(id==='bear'){oval(-size*.49,-size*.65,size*.22,size*.22,fur);oval(size*.49,-size*.65,size*.22,size*.22,fur);oval(-size*.49,-size*.65,size*.1,size*.1,'#eaaeb2',null);oval(size*.49,-size*.65,size*.1,size*.1,'#eaaeb2',null)}
- // Plush body and round head
- oval(0,size*.06,size*.69,size*.67,fur);oval(0,-size*.28,size*.67,size*.61,fur);
- if(id==='bunny')oval(0,-size*.01,size*.32,size*.24,'#fff7ed',null);
- if(id==='kitten')oval(0,-size*.01,size*.34,size*.23,'#f0edf4',null);
- if(id==='frog')oval(0,size*.02,size*.39,size*.29,'#d9f3b9',null);
- if(id==='bear')oval(0,-size*.01,size*.34,size*.25,'#f2d2ae',null);
- // Eyes, nose, smile and rosy cheeks
- oval(-size*.23,-size*.34,size*.055,size*.075,'#35495b',null);oval(size*.23,-size*.34,size*.055,size*.075,'#35495b',null);
- oval(-size*.25,-size*.37,size*.018,size*.022,'#fff',null);oval(size*.21,-size*.37,size*.018,size*.022,'#fff',null);
- if(id==='kitten'){ctx.fillStyle='#e99bab';ctx.beginPath();ctx.moveTo(-size*.07,-size*.17);ctx.lineTo(size*.07,-size*.17);ctx.lineTo(0,-size*.09);ctx.fill()}else{oval(0,-size*.15,size*.06,size*.045,id==='frog'?'#5caa68':'#d98f9b',null)}
- ctx.strokeStyle='#536477';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(0,-size*.1);ctx.lineTo(0,-size*.02);ctx.quadraticCurveTo(-size*.12,size*.1,-size*.2,-size*.01);ctx.moveTo(0,-size*.02);ctx.quadraticCurveTo(size*.12,size*.1,size*.2,-size*.01);ctx.stroke();
- oval(-size*.4,-size*.12,size*.1,size*.06,'#f4b5bd',null);oval(size*.4,-size*.12,size*.1,size*.06,'#f4b5bd',null);
- // A few little tufts give the friends a soft plush outline
- ctx.fillStyle=fur;for(let i=0;i<9;i++){const ang=Math.PI+i*Math.PI/8;ctx.beginPath();ctx.arc(Math.cos(ang)*size*.62,Math.sin(ang)*size*.57-size*.02,size*.09,0,Math.PI*2);ctx.fill()}
- ctx.restore();
-}
-function scenery(){
- const sky=ctx.createLinearGradient(0,0,0,460);sky.addColorStop(0,'#8ed5ff');sky.addColorStop(.55,'#d7f4ff');sky.addColorStop(1,'#ffe9c9');ctx.fillStyle=sky;ctx.fillRect(0,0,720,460);
- // distant hills
- ctx.fillStyle='#a8dc9b';ctx.beginPath();ctx.moveTo(0,255);ctx.quadraticCurveTo(120,145,250,245);ctx.quadraticCurveTo(390,135,520,240);ctx.quadraticCurveTo(630,165,720,235);ctx.lineTo(720,460);ctx.lineTo(0,460);ctx.fill();
- ctx.fillStyle='#7fc78b';ctx.beginPath();ctx.moveTo(0,300);ctx.quadraticCurveTo(160,205,300,295);ctx.quadraticCurveTo(520,190,720,290);ctx.lineTo(720,460);ctx.lineTo(0,460);ctx.fill();
- // fluffy clouds
- for(let i=0;i<4;i++){let x=(i*210-frame*.18%900+900)%900-70,y=65+(i%2)*55;ctx.fillStyle='#ffffffdd';ctx.beginPath();ctx.arc(x,y,23,0,7);ctx.arc(x+25,y-12,31,0,7);ctx.arc(x+55,y,23,0,7);ctx.fill()}
- // winding golden path
- ctx.fillStyle='#d69b58';ctx.beginPath();ctx.moveTo(260,230);ctx.quadraticCurveTo(305,285,160,460);ctx.lineTo(590,460);ctx.quadraticCurveTo(420,300,460,230);ctx.closePath();ctx.fill();
- ctx.fillStyle='#edbd78';ctx.beginPath();ctx.moveTo(305,235);ctx.quadraticCurveTo(335,315,235,460);ctx.lineTo(510,460);ctx.quadraticCurveTo(390,315,420,235);ctx.closePath();ctx.fill();
- // grass verges
- ctx.fillStyle='#69b96d';ctx.fillRect(0,355,720,105);
- // path over grass in foreground
- ctx.fillStyle='#e8b66f';ctx.beginPath();ctx.moveTo(275,235);ctx.quadraticCurveTo(330,320,170,460);ctx.lineTo(575,460);ctx.quadraticCurveTo(400,320,445,235);ctx.closePath();ctx.fill();
- // fence posts scrolling by
- for(let i=0;i<8;i++){let x=((i*125-frame*1.1)%950+950)%950-100;let y=265+(i%3)*28;ctx.fillStyle='#9a6038';ctx.fillRect(x,y,12,72);ctx.fillStyle='#c88a50';ctx.fillRect(x-5,y+12,28,9);ctx.fillRect(x-5,y+43,28,9)}
- // trees at both sides
- for(let i=0;i<6;i++){let side=i%2===0?0:1;let x=side?650+(i%3)*48:35+(i%3)*42;let y=185+(i%3)*38;let s=1+(i%2)*.22;
- ctx.fillStyle='#98603c';ctx.fillRect(x-9*s,y,18*s,75*s);
- ctx.fillStyle=['#6fbd72','#8dcc79','#f2a9b1'][i%3];ctx.beginPath();ctx.arc(x,y-12*s,39*s,0,7);ctx.arc(x-25*s,y+4*s,28*s,0,7);ctx.arc(x+25*s,y+4*s,28*s,0,7);ctx.fill();
- ctx.fillStyle='#ffffff55';for(let k=0;k<5;k++){ctx.beginPath();ctx.arc(x-20+k*10,y-25+(k%2)*8,4,0,7);ctx.fill()}
- }
- // flowers dotted along the grass
- for(let i=0;i<34;i++){let x=(i*83+frame*.55)%740-10,y=300+(i*47%150);if(x<245||x>500){ctx.fillStyle=['#ff7e9b','#ffe17b','#fff','#b99af4'][i%4];for(let k=0;k<5;k++){let ang=k*Math.PI*2/5;ctx.beginPath();ctx.arc(x+Math.cos(ang)*4,y+Math.sin(ang)*4,3.5,0,7);ctx.fill()}ctx.fillStyle='#e6a84b';ctx.beginPath();ctx.arc(x,y,2.5,0,7);ctx.fill()}}
-}
-function draw(){
- scenery();
- obstacles.forEach(o=>{ctx.save();ctx.fillStyle='#8a512e';ctx.beginPath();ctx.roundRect(o.x,345,o.w+18,38,15);ctx.fill();ctx.fillStyle='#bd8050';ctx.beginPath();ctx.roundRect(o.x+5,349,o.w+8,28,12);ctx.fill();ctx.strokeStyle='#e0b27a';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(o.x+12,348);ctx.lineTo(o.x+o.w+6,376);ctx.moveTo(o.x+o.w+4,348);ctx.lineTo(o.x+15,376);ctx.stroke();ctx.restore()});
- gems.forEach((g,i)=>{let col=['#ff79a6','#ffc04f','#71c8ff'][i%3];ctx.save();ctx.translate(g.x,g.y);ctx.shadowColor=col;ctx.shadowBlur=12;ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(0,-15);ctx.quadraticCurveTo(18,-2,12,10);ctx.quadraticCurveTo(0,22,-12,10);ctx.quadraticCurveTo(-18,-2,0,-15);ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#ffffffcc';ctx.beginPath();ctx.ellipse(-4,-4,3,6,-.4,0,7);ctx.fill();ctx.restore()});
- drawPet(player.x,player.y,55,selected);
- if(!running){ctx.fillStyle='#36556a';ctx.textAlign='center';ctx.font='bold 30px system-ui';ctx.fillText(over?'Lovely try!':'Ready, fluffy friend?',360,205);ctx.font='20px system-ui';ctx.fillText(over?'Press Play to try again':'Tap Play to begin',360,242)}
-}
-function update(){
- if(!running)return;frame++;speed=4+Math.min(score/180,5);player.vy+=.58;player.y+=player.vy;if(player.y>320){player.y=320;player.vy=0;player.onGround=true}
- if(frame%Math.max(58,105-Math.floor(speed*4))===0)obstacles.push({x:740,w:55+Math.random()*24});
- if(frame%105===0)gems.push({x:740,y:270+Math.random()*65});
- obstacles.forEach(o=>o.x-=speed);gems.forEach(g=>g.x-=speed);obstacles=obstacles.filter(o=>o.x>-60);gems=gems.filter(g=>g.x>-20);
- for(const o of obstacles){if(player.x+32>o.x&&player.x-32<o.x+o.w+18&&player.y+35>345){end();break}}
- gems=gems.filter(g=>{if(Math.abs(g.x-player.x)<35&&Math.abs(g.y-player.y)<38){drops++;$('drops').textContent=drops;$('goalCount').textContent=(drops%100)+' / 100';$('goalFill').style.width=(drops%100)+'%';unlock();return false}return true});
- score++;$('score').textContent=score;if(score>best){best=score;$('best').textContent=best;localStorage.jjBest=best}
- draw();requestAnimationFrame(update);
-}
-function jump(){if(running&&player.onGround){player.vy=-13;player.onGround=false}}
-function start(){score=0;$('play').textContent='⬆ Jump';frame=0;speed=4;obstacles=[];gems=[];player.y=320;player.vy=0;running=true;over=false;$('score').textContent='0';$('message').textContent='Go, fluffy friend!';$('play').textContent='↻ Restart';draw();requestAnimationFrame(update)}
-function end(){running=false;over=true;$('message').textContent='You collected '+drops+' jelly drops. Great jumping!';$('play').textContent='↻ Play again';draw()}
+const canvas=document.getElementById('world'),$=id=>document.getElementById(id);
+if(!window.THREE){$('message').textContent='Please check your internet connection to load the 3D world.';return}
+const THREE=window.THREE;
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;
+const scene=new THREE.Scene();scene.background=new THREE.Color('#91d9ff');scene.fog=new THREE.Fog('#c8efff',28,90);
+const camera=new THREE.PerspectiveCamera(58,innerWidth/innerHeight,.1,130);camera.position.set(0,5.8,10.5);camera.lookAt(0,1,-5);
+scene.add(new THREE.HemisphereLight(0xffffff,0x8bbd8a,2));
+const sun=new THREE.DirectionalLight(0xffffff,2.2);sun.position.set(-5,12,7);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);scene.add(sun);
+const mat=(color,roughness=.85)=>new THREE.MeshStandardMaterial({color,roughness});
+const grass=mat('#79ca83'),path=mat('#e9bd7d'),edge=mat('#fff0c9'),wood=mat('#a96e42'),leafMats=['#72c77b','#8bd17f','#f3a9b5'].map(c=>mat(c)),white=mat('#fff7e8'),dark=mat('#394b5b'),pink=mat('#f4b5c7');
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(100,150),grass);ground.rotation.x=-Math.PI/2;ground.position.set(0,-.18,-35);ground.receiveShadow=true;scene.add(ground);
+const track=new THREE.Mesh(new THREE.PlaneGeometry(8,150),path);track.rotation.x=-Math.PI/2;track.position.set(0,-.12,-35);track.receiveShadow=true;scene.add(track);
+for(let x of [-4.15,4.15]){const rail=new THREE.Mesh(new THREE.BoxGeometry(.18,.13,150),edge);rail.position.set(x,-.04,-35);scene.add(rail)}
+// Soft distant hills
+for(let i=0;i<10;i++){const hill=new THREE.Mesh(new THREE.SphereGeometry(1,16,12),mat(i%2?'#a8df9a':'#b8e5a5'));hill.scale.set(7+Math.random()*5,2+Math.random()*2,3);hill.position.set((i%2?1:-1)*(8+Math.random()*5),-.5,-25-i*7);scene.add(hill)}
+// Puffy clouds
+const clouds=[];for(let i=0;i<9;i++){const g=new THREE.Group();for(let j=0;j<4;j++){const puff=new THREE.Mesh(new THREE.SphereGeometry(1,12,10),white);puff.scale.set(1.1,.55,.55);puff.position.set((j-1.5)*.8,Math.random()*.35,0);g.add(puff)}g.position.set((Math.random()-.5)*28,7+Math.random()*6,-15-Math.random()*65);g.scale.setScalar(.8+Math.random()*.7);scene.add(g);clouds.push(g)}
+// Trees and flowers form a scrolling enchanted garden
+const scenery=[];
+function tree(x,z,s){const g=new THREE.Group();const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.17,.25,1.6,8),wood);trunk.position.y=.8;trunk.castShadow=true;g.add(trunk);for(let k=0;k<4;k++){const crown=new THREE.Mesh(new THREE.SphereGeometry(.85-k*.08,14,12),leafMats[(k+Math.floor(Math.random()*3))%3]);crown.position.set((k%2-.5)*.55,1.7+Math.floor(k/2)*.55,0);crown.castShadow=true;g.add(crown)}g.position.set(x,0,z);g.scale.setScalar(s);scene.add(g);scenery.push(g)}
+for(let i=0;i<30;i++){const z=-i*4-3;tree(-6-Math.random()*2,z,.8+Math.random()*.6);tree(6+Math.random()*2,z,.8+Math.random()*.6)}
+const flowerMats=['#ff7e9b','#ffe17b','#fff','#b99af4'].map(c=>mat(c));
+for(let i=0;i<70;i++){const g=new THREE.Group();for(let k=0;k<5;k++){const petal=new THREE.Mesh(new THREE.SphereGeometry(.09,8,6),flowerMats[i%4]);petal.position.set(Math.cos(k*Math.PI*2/5)*.13,.32,Math.sin(k*Math.PI*2/5)*.13);g.add(petal)}const centre=new THREE.Mesh(new THREE.SphereGeometry(.07,8,6),mat('#f3b64e'));centre.position.y=.34;g.add(centre);g.position.set((Math.random()>.5?1:-1)*(4.8+Math.random()*3),0,-Math.random()*100);scene.add(g);scenery.push(g)}
+const pets=[{id:'bunny',name:'Bunny',emoji:'🐰',color:'#fff0d8',cost:0},{id:'kitten',name:'Kitten',emoji:'🐱',color:'#d9dce8',cost:0},{id:'frog',name:'Frog',emoji:'🐸',color:'#8ed46d',cost:0},{id:'bear',name:'Bear',emoji:'🐻',color:'#b98153',cost:0},{id:'fox',name:'Fox',emoji:'🦊',color:'#f6a05b',cost:8},{id:'lamb',name:'Lamb',emoji:'🐑',color:'#fff8ec',cost:16},{id:'axolotl',name:'Axolotl',emoji:'🩷',color:'#f5a9c6',cost:25},{id:'penguin',name:'Penguin',emoji:'🐧',color:'#8abbdc',cost:36},{id:'dragon',name:'Dragon',emoji:'🐲',color:'#9b91df',cost:50},{id:'unicorn',name:'Unicorn',emoji:'🦄',color:'#e8b4e4',cost:70}];
+let selected='bunny',unlocked=new Set(['bunny','kitten','frog','bear']),running=false,paused=false,over=false,score=0,drops=0,best=Number(localStorage.jjBest||0),speed=17,lane=0,targetLane=0,vy=0,onGround=true,jumpTime=0,spawnClock=0,gemClock=0,objects=[],clock=new THREE.Clock();
+$('best').textContent=best;
+function makePet(id){const p=pets.find(v=>v.id===id)||pets[0],fur=mat(p.color),g=new THREE.Group();function ball(name,x,y,z,sx,sy,sz,m){const o=new THREE.Mesh(new THREE.SphereGeometry(1,24,18),m);o.name=name;o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.castShadow=true;g.add(o);return o}
+ball('body',0,.82,0,.58,.68,.43,fur);ball('head',0,1.55,0,.63,.58,.55,fur);ball('muzzle',0,1.35,.49,.29,.2,.13,white);
+if(id==='bunny'){for(let s of [-1,1]){ball('ear',s*.3,2.22,0,.17,.48,.14,fur);ball('inner ear',s*.3,2.23,.12,.085,.34,.035,pink)}}
+if(id==='kitten'){for(let s of [-1,1]){const ear=new THREE.Mesh(new THREE.ConeGeometry(.24,.48,4),fur);ear.position.set(s*.39,2.03,0);ear.rotation.z=s*-.2;ear.castShadow=true;g.add(ear)}}
+if(id==='frog'){for(let s of [-1,1]){ball('eye stalk',s*.34,2.02,0,.2,.2,.2,fur);ball('eye white',s*.34,2.04,.15,.13,.14,.1,white)}}
+if(id==='bear'){for(let s of [-1,1]){ball('ear',s*.48,1.95,0,.2,.2,.16,fur);ball('ear pink',s*.48,1.95,.12,.1,.1,.04,pink)}}
+if(id==='fox'){for(let s of [-1,1]){const ear=new THREE.Mesh(new THREE.ConeGeometry(.22,.48,4),fur);ear.position.set(s*.38,2.02,0);g.add(ear)}}
+if(id==='lamb'){for(let i=0;i<7;i++)ball('wool',Math.cos(i)*.5,1.7+Math.sin(i)*.22,Math.sin(i)*.4,.23,.23,.23,white)}
+if(id==='axolotl'){for(let s of [-1,1]){ball('gill',s*.7,1.7,0,.13,.32,.13,pink);ball('gill',s*.78,1.65,.12,.1,.24,.1,pink)}}
+if(id==='penguin'){ball('belly',0,.85,.38,.4,.5,.13,white)}
+if(id==='dragon'){for(let s of [-1,1]){const horn=new THREE.Mesh(new THREE.ConeGeometry(.13,.42,8),mat('#79c987'));horn.position.set(s*.38,2.1,0);g.add(horn)}}
+if(id==='unicorn'){const horn=new THREE.Mesh(new THREE.ConeGeometry(.11,.48,8),mat('#ffd36e'));horn.position.set(0,2.18,.1);horn.rotation.x=-.2;g.add(horn)}
+if(id!=='frog'){for(let s of [-1,1])ball('eye',s*.23,1.64,.49,.065,.09,.055,dark)}
+ball('nose',0,1.4,.62,.07,.05,.04,pink);
+for(let s of [-1,1])ball('cheek',s*.39,1.35,.44,.12,.07,.035,pink);
+const feet=[];for(let s of [-1,1])feet.push(ball('foot',s*.33,.22,.13,.23,.16,.28,fur));g.userData.feet=feet;g.userData.fur=fur;return g}
+let player=makePet(selected);player.position.set(0,0,3);scene.add(player);
+function changePet(id){selected=id;scene.remove(player);player=makePet(id);player.position.set(lane*2,0,3);scene.add(player);document.querySelectorAll('[data-pet]').forEach(b=>b.classList.toggle('active',b.dataset.pet===id));}
+function makeObstacle(l,z){const g=new THREE.Group();const log=new THREE.Mesh(new THREE.CylinderGeometry(.38,.38,1.55,12),wood);log.rotation.z=Math.PI/2;log.position.y=.43;log.castShadow=true;g.add(log);const cap=mat('#d69a65');for(let s of [-1,1]){const c=new THREE.Mesh(new THREE.CircleGeometry(.32,12),cap);c.rotation.y=s*Math.PI/2;c.position.set(s*.78,.43,0);g.add(c)}g.position.set(l*2,0,z);scene.add(g);objects.push({group:g,type:'obstacle',lane:l,hit:false})}
+function makeGem(l,z){const m=new THREE.Mesh(new THREE.OctahedronGeometry(.43,1),mat('#ff76a8',.25));m.position.set(l*2,1.2,z);m.castShadow=true;scene.add(m);objects.push({group:m,type:'gem',lane:l,hit:false})}
+function spawn(){const l=Math.floor(Math.random()*3)-1;makeObstacle(l,-58-Math.random()*8);if(Math.random()<.8)makeGem(Math.floor(Math.random()*3)-1,-68)}
+function setLane(n){targetLane=Math.max(-1,Math.min(1,targetLane+n))}
+function jump(){if(running&&onGround){vy=9.5;onGround=false;jumpTime=0}}
+function move(e){if(e.code==='ArrowLeft'||e.code==='KeyA'){setLane(-1)}else if(e.code==='ArrowRight'||e.code==='KeyD'){setLane(1)}else if(e.code==='Space'||e.code==='ArrowUp'||e.code==='KeyW'){e.preventDefault();if(!running&&!over)start();else jump()}}
+document.addEventListener('keydown',move);
+let touchX=0,touchY=0;canvas.addEventListener('pointerdown',e=>{touchX=e.clientX;touchY=e.clientY});canvas.addEventListener('pointerup',e=>{if(!running)return;const dx=e.clientX-touchX,dy=e.clientY-touchY;if(Math.abs(dx)>25){setLane(dx>0?1:-1)}else if(dy<-20||Math.abs(dx)<20){jump()}});
+function renderBook(){$('cards').innerHTML='';pets.forEach(p=>{const el=document.createElement('div');el.className='pet'+(unlocked.has(p.id)?'':' locked');el.innerHTML='<div class="emoji">'+(unlocked.has(p.id)?p.emoji:'❔')+'</div><b>'+(unlocked.has(p.id)?p.name:'Mystery friend')+'</b><div>'+(unlocked.has(p.id)?'Tap to choose':p.cost+' jelly drops')+'</div>';el.onclick=()=>{if(unlocked.has(p.id)){changePet(p.id);$('book').style.display='none';$('message').textContent=p.name+' is ready to run! ✨'}};$('cards').appendChild(el)})}
 function unlock(){for(const p of pets){if(!unlocked.has(p.id)&&drops>=p.cost){unlocked.add(p.id);$('message').textContent='New friend discovered: '+p.name+'! ✨';renderBook();break}}}
-function renderBook(){$('cards').innerHTML='';pets.forEach(p=>{let el=document.createElement('div');el.className='pet'+(unlocked.has(p.id)?'':' locked');el.innerHTML='<div class="emoji">'+(unlocked.has(p.id)?p.emoji:'❔')+'</div><b>'+(unlocked.has(p.id)?p.name:'Mystery friend')+'</b><div class="small">'+(unlocked.has(p.id)?'Discovered!':p.cost+' jelly drops')+'</div>';el.onclick=()=>{if(unlocked.has(p.id)){selected=p.id;$('message').textContent=p.name+' is ready to jump!';draw()}};$('cards').appendChild(el)})}
-$('play').onclick=()=>{if(!running)start();else jump()};$('jump').onclick=jump;canvas.addEventListener('pointerdown',()=>{if(running)jump()});document.addEventListener('keydown',e=>{if(e.code==='Space'||e.code==='ArrowUp'){e.preventDefault();if(!running)start();else jump()}});
-document.querySelectorAll('[data-pet]').forEach(b=>b.onclick=()=>{selected=b.dataset.pet;$('message').textContent='You chose '+b.textContent+'!';draw()});
-$('collection').onclick=()=>{let b=$('book');b.style.display=b.style.display==='block'?'none':'block';renderBook()};$('friendsTop').onclick=()=>$('collection').click();$('pause').onclick=()=>{if(running){running=false;$('message').textContent='Paused! Tap Jump to continue.'}else if(!over)start()};
-renderBook();draw();
-if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+function clearObjects(){objects.forEach(o=>scene.remove(o.group));objects=[]}
+function start(){clearObjects();score=0;lane=0;targetLane=0;vy=0;onGround=true;speed=17;spawnClock=0;gemClock=0;running=true;paused=false;over=false;$('score').textContent='0';$('play').textContent='Ⅱ Pause';$('message').textContent='Go, fluffy friend!';player.position.set(0,0,3);clock.getDelta()}
+function end(){running=false;over=true;$('play').textContent='↻ Play again';$('message').textContent='Lovely run! You collected '+drops+' jelly drops!';}
+function update(dt){if(!running)return;score+=Math.round(dt*30);$('score').textContent=score;speed=Math.min(29,17+score*.004);spawnClock+=dt;gemClock+=dt;if(spawnClock>Math.max(.8,1.55-score*.0005)){spawn();spawnClock=0}
+lane+=(targetLane-lane)*Math.min(1,dt*12);player.position.x=lane*2;player.position.y=Math.max(0,player.position.y+vy*dt);if(!onGround){vy-=23*dt;if(player.position.y<=0){player.position.y=0;vy=0;onGround=true}}player.rotation.z+=(lane*-.08-player.rotation.z)*dt*7;
+const t=clock.elapsedTime;player.userData.feet.forEach((f,i)=>{f.position.z=Math.sin(t*13+i*Math.PI)*.12;f.position.y=.22+Math.max(0,Math.sin(t*13+i*Math.PI))*.09});
+for(let i=objects.length-1;i>=0;i--){const o=objects[i];o.group.position.z+=speed*dt;if(o.type==='gem'){o.group.rotation.y+=dt*2.7;o.group.rotation.z+=dt*1.2}
+if(!o.hit&&Math.abs(o.group.position.z-3)<.85&&o.lane===Math.round(lane)){o.hit=true;if(o.type==='gem'){drops++;$('drops').textContent=drops;$('goalCount').textContent=(drops%100)+' / 100';$('goalFill').style.width=(drops%100)+'%';scene.remove(o.group);objects.splice(i,1);unlock();continue}else if(player.position.y<.85){end();break}}
+if(o.group.position.z>12){scene.remove(o.group);objects.splice(i,1)}}
+scenery.forEach(o=>{o.position.z+=speed*dt;if(o.position.z>12)o.position.z=-100-Math.random()*25});clouds.forEach(c=>{c.position.x+=dt*.35;if(c.position.x>19)c.position.x=-19});
+camera.position.x+=(lane*.38-camera.position.x)*dt*2;camera.lookAt(lane*.3,1.2,-5)}
+function loop(){requestAnimationFrame(loop);const dt=Math.min(clock.getDelta(),.04);if(running)update(dt);renderer.render(scene,camera)}loop();
+$('play').onclick=()=>{if(running){running=false;$('play').textContent='▶ Resume';$('message').textContent='Paused!';}else start()};
+$('pause').onclick=()=>{if(running){running=false;$('play').textContent='▶ Resume';$('message').textContent='Paused!'}else if(!over)start()};
+$('friendsTop').onclick=()=>{$('book').style.display=$('book').style.display==='block'?'none':'block';renderBook()};
+document.querySelectorAll('[data-pet]').forEach(b=>b.onclick=()=>{changePet(b.dataset.pet);$('message').textContent='You chose '+b.textContent.trim()+'!'});
+$('drops').textContent=drops;renderBook();
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
 })();
 </script></body></html>
