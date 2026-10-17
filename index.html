@@ -114,11 +114,11 @@ const backSeam=new THREE.CatmullRomCurve3([
 ]);
 const seam=new THREE.Mesh(new THREE.TubeGeometry(backSeam,28,.012,5,false),thread);seam.name='tiny plush seam';g.add(seam);
 if(id==='bunny'){
- // Long upright rabbit ears and a round cotton tail are clear from the chase camera.
+ // Soft, long floppy lop ears like the collector-guide bunny.
  for(let s of [-1,1]){
-  const e=ear(s*.29,2.28,-.04,.18,.5,.15);
-  e.rotation.z=s*-.08;
-  ear(s*.29,2.28,-.19,.09,.34,.035,pink);
+  const e=ear(s*.56,1.9,-.04,.2,.48,.16);
+  e.rotation.z=s*-.52;
+  const inner=ear(s*.56,1.9,.105,.105,.34,.035,pink);inner.rotation.z=s*-.52;
  }
  ball('cotton tail',0,.73,-.53,.25,.25,.22,cream);
  ball('rabbit haunch',0,.43,-.22,.48,.37,.28,fur);
@@ -133,14 +133,17 @@ if(id==='bunny'){
  tail.position.set(.35,.94,-.57);tail.rotation.set(Math.PI/2,0,-.4);g.add(tail);
  ball('kitten back patch',0,1.12,-.49,.3,.35,.035,mat('#aeb4c5'));
 }else if(id==='frog'){
- // Two raised frog eyes and wide webbed-looking feet make the frog silhouette unmistakable.
+ // A squat round frog with high eye stalks, a broad smooth face and splayed webbed feet.
+ ball('frog round belly',0,.78,.08,.56,.56,.43,mat('#a6df72'));
  for(let s of [-1,1]){
-  ball('frog eye bump',s*.36,2.03,-.04,.24,.25,.23,fur);
-  ball('frog rear eye white',s*.36,2.05,-.22,.16,.17,.09,cream);
-  ball('frog rear pupil',s*.36,2.05,-.29,.07,.09,.035,dark);
-  ball('frog back leg',s*.48,.38,-.24,.3,.24,.34,fur);
-  ball('frog web foot',s*.52,.16,-.04,.3,.1,.25,fur);
+  ball('frog eye stalk',s*.39,2.02,.05,.19,.31,.19,fur);
+  ball('frog big eye white',s*.39,2.13,.2,.155,.16,.095,cream);
+  ball('frog pupil',s*.39,2.13,.285,.075,.09,.035,dark);
+  ball('frog back leg',s*.52,.38,-.24,.34,.25,.38,fur);
+  ball('frog webbed foot',s*.57,.15,.12,.34,.11,.28,fur);
  }
+ // A wide, friendly curved smile across the frog's face.
+ const smile=new THREE.Mesh(new THREE.TorusGeometry(.27,.025,8,24,Math.PI),dark);smile.name='frog smile';smile.position.set(0,1.39,.635);smile.rotation.z=Math.PI;g.add(smile);
  ball('frog back spot',0,1.13,-.51,.2,.16,.035,mat('#65b957'));
 }else if(id==='bear'){
  // Round ears and a little round bear tail, with no pointed cat/fox features.
@@ -216,14 +219,16 @@ if(id==='bunny'){
  for(let i=0;i<3;i++)ball('rainbow unicorn tail',-.1+i*.1,.72,-.78,.11,.2,.28,mat(['#f4a9c8','#a9dff2','#d2b1f2'][i]));
 }
 // Face details are kept on the front of each plush friend.
-if(id!=='frog'){for(let s of [-1,1]){ball('eye',s*.25,1.65,.52,.07,.095,.045,dark);ball('eye shine',s*.27,1.69,.56,.025,.03,.018,cream)}}
-ball('muzzle',0,1.36,.52,.3,.2,.14,cream);
-ball('nose',0,1.42,.655,.075,.055,.04,pink);
-for(let s of [-1,1])ball('cheek',s*.4,1.35,.47,.12,.075,.035,pink);
+if(id!=='frog'){
+ for(let s of [-1,1]){ball('eye',s*.25,1.65,.57,.07,.095,.045,dark);ball('eye shine',s*.27,1.69,.61,.025,.03,.018,cream)}
+ ball('soft muzzle',0,1.36,.57,.3,.2,.14,cream);
+ ball('nose',0,1.42,.70,.075,.055,.04,pink);
+ for(let s of [-1,1])ball('cheek',s*.4,1.35,.52,.12,.075,.035,pink);
+}
 g.userData.feet=g.children.filter(o=>o.name==='foot');return g
 }
-let player=makePet(selected);player.rotation.y=Math.PI;player.position.set(0,0,3);scene.add(player);
-function changePet(id){selected=id;scene.remove(player);player=makePet(id);player.rotation.y=Math.PI;player.position.set(lane*2,0,3);scene.add(player);document.querySelectorAll('[data-pet]').forEach(b=>b.classList.toggle('active',b.dataset.pet===id));}
+let player=makePet(selected);player.rotation.y=0;player.position.set(0,0,3);scene.add(player);
+function changePet(id){selected=id;scene.remove(player);player=makePet(id);player.rotation.y=0;player.position.set(lane*2,0,3);scene.add(player);document.querySelectorAll('[data-pet]').forEach(b=>b.classList.toggle('active',b.dataset.pet===id));}
 function makeObstacle(l,z,kind='log'){
  const g=new THREE.Group();
  if(kind==='log'){
@@ -250,7 +255,7 @@ let touchX=0,touchY=0;canvas.addEventListener('pointerdown',e=>{touchX=e.clientX
 function renderBook(){$('cards').innerHTML='';pets.forEach(p=>{const el=document.createElement('div');el.className='pet'+(unlocked.has(p.id)?'':' locked');el.innerHTML='<div class="emoji">'+(unlocked.has(p.id)?p.emoji:'❔')+'</div><b>'+(unlocked.has(p.id)?p.name:'Mystery friend')+'</b><div>'+(unlocked.has(p.id)?'Tap to choose':p.cost+' jelly drops')+'</div>';el.onclick=()=>{if(unlocked.has(p.id)){changePet(p.id);$('book').style.display='none';$('message').textContent=p.name+' is ready to run! ✨'}};$('cards').appendChild(el)})}
 function unlock(){for(const p of pets){if(!unlocked.has(p.id)&&drops>=p.cost){unlocked.add(p.id);$('message').textContent='New friend discovered: '+p.name+'! ✨';effect('unlock');renderBook();break}}}
 function clearObjects(){objects.forEach(o=>scene.remove(o.group));objects=[]}
-function start(){clearObjects();score=0;lane=0;targetLane=0;vy=0;onGround=true;slideTimer=0;turnClock=0;turnTimer=0;player.rotation.y=Math.PI;speed=17;spawnClock=0;gemClock=0;running=true;paused=false;over=false;$('score').textContent='0';$('play').textContent='Ⅱ Pause';$('message').textContent='Go, fluffy friend!';player.position.set(0,0,3);clock.getDelta();audioReady();startMusic()}
+function start(){clearObjects();score=0;lane=0;targetLane=0;vy=0;onGround=true;slideTimer=0;turnClock=0;turnTimer=0;player.rotation.y=0;speed=17;spawnClock=0;gemClock=0;running=true;paused=false;over=false;$('score').textContent='0';$('play').textContent='Ⅱ Pause';$('message').textContent='Go, fluffy friend!';player.position.set(0,0,3);clock.getDelta();audioReady();startMusic()}
 function end(){const collectedThisRun=drops;running=false;over=true;stopMusic();effect('end');drops=0;$('drops').textContent='0';$('goalCount').textContent='0 / 100';$('goalFill').style.width='0%';$('play').textContent='↻ Play again';$('message').textContent='Lovely run! You collected '+collectedThisRun+' jelly drops. Your friends are safe! 💛';}
 function update(dt){if(!running)return;score+=Math.round(dt*30);$('score').textContent=score;speed=Math.min(29,17+score*.004);spawnClock+=dt;gemClock+=dt;if(spawnClock>Math.max(.8,1.55-score*.0005)){spawn();spawnClock=0}
 lane+=(targetLane-lane)*Math.min(1,dt*24);player.position.x=lane*2;player.position.y=Math.max(0,player.position.y+vy*dt);if(!onGround){vy-=23*dt;if(player.position.y<=0){player.position.y=0;vy=0;onGround=true}}player.rotation.z+=(lane*-.08-player.rotation.z)*dt*7;turnClock+=dt;if(turnClock>=8&&turnTimer<=0){turnClock=0;turnTimer=1.4}if(turnTimer>0)turnTimer=Math.max(0,turnTimer-dt);const faceTarget=turnTimer>.7?0:Math.PI;player.rotation.y+=(faceTarget-player.rotation.y)*Math.min(1,dt*7);
