@@ -10,15 +10,31 @@
 <title>JellyJump</title>
 <style>
 :root{--ink:#36556a;--mint:#baf4e8;--coral:#ffadad;--cream:#fff9e9;--blue:#a9ddff}
-*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden}body{font-family:ui-rounded,'Trebuchet MS',system-ui,sans-serif;color:var(--ink);background:linear-gradient(160deg,#d9fbf2,#d9eaff 65%,#fff0d8);min-height:100svh}.app{width:100%;height:100dvh;min-height:100svh;background:#ffffffb8;padding:clamp(8px,2vw,18px);display:flex;flex-direction:column;text-align:center;overflow:auto}
-h1{font-size:clamp(2.1rem,8vw,3rem);margin:0;color:#399b9a;letter-spacing:-2px;text-shadow:2px 3px #fff}
-.sub{margin:0 0 12px;color:#678397}.panel{flex:1;min-height:0;display:flex;flex-direction:column;background:#f7fffc;border:2px solid #fff;border-radius:18px;padding:clamp(6px,1.5vw,12px)}
-canvas{display:block;width:100%;height:100%;flex:1;min-height:180px;border-radius:16px;background:#c9f4eb;touch-action:manipulation}
-.stats{display:flex;justify-content:space-around;font-weight:800;padding:7px 0;flex:none}.actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px;flex:none}
-button{border:0;border-radius:999px;padding:11px 16px;background:#72d4c5;color:#174e59;font:inherit;font-weight:800;box-shadow:0 3px 0 #49a99f;cursor:pointer}
-button.secondary{background:#ffe0a8;box-shadow:0 3px 0 #e9bf79}button:active{transform:translateY(2px);box-shadow:none}
-#message{min-height:24px;font-weight:700;margin:6px 0 0;flex:none}.small{font-size:.82rem;color:#78909c;margin:10px 0 0}
-.collection{display:none;text-align:left;margin-top:12px}.collection h2{text-align:center;margin:4px}.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.pet{background:white;border-radius:14px;padding:9px;text-align:center;border:2px solid #e3f6ef}.pet .emoji{font-size:2rem}.locked{filter:grayscale(1);opacity:.5}
+*{box-sizing:border-box}
+html,body{width:100%;height:100%;margin:0;overflow:hidden}
+body{font-family:ui-rounded,"Trebuchet MS",system-ui,sans-serif;color:var(--ink);background:#c9f4eb}
+.app{position:fixed;inset:0;width:100vw;height:100dvh;margin:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;overflow:hidden;text-align:center}
+.app h1,.app>.sub,.app>.small{display:none}
+.panel{position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0;border:0;border-radius:0;background:transparent;display:block}
+canvas{position:absolute;inset:0;display:block;width:100%;height:100%;max-width:none;max-height:none;border:0;border-radius:0;background:#c9f4eb;touch-action:manipulation}
+.stats{position:absolute;z-index:2;top:max(10px,env(safe-area-inset-top));left:0;width:100%;display:flex;justify-content:space-around;font-weight:900;font-size:clamp(16px,3vw,22px);padding:9px 8px;color:#36556a;text-shadow:0 1px #fff}
+.actions{position:absolute;z-index:3;left:0;width:100%;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:0;padding:0 8px}
+#choices{bottom:max(12px,env(safe-area-inset-bottom))}
+#choices button{padding:9px 13px;font-size:clamp(12px,2.7vw,16px)}
+#choices button:focus{outline:3px solid #fff}
+#play,#jump,#collection{bottom:66px}
+#message{position:absolute;z-index:2;left:0;bottom:116px;width:100%;min-height:24px;margin:0;padding:0 12px;font-weight:900;color:#36556a;text-shadow:0 1px 2px #fff}
+button{border:2px solid #fff;border-radius:999px;padding:10px 15px;background:#72d4c5;color:#174e59;font:inherit;font-weight:800;box-shadow:0 3px 0 #49a99f;cursor:pointer}
+button.secondary{background:#ffe0a8;box-shadow:0 3px 0 #e9bf79}
+button:active{transform:translateY(2px);box-shadow:none}
+.collection{display:none;position:absolute;z-index:5;left:5%;right:5%;top:15%;max-height:70%;overflow:auto;text-align:left;margin:0;padding:12px;background:#f7fffcf2;border:2px solid white;border-radius:20px;box-shadow:0 8px 30px #36556a44}
+.collection h2{text-align:center;margin:4px}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.pet{background:white;border-radius:14px;padding:9px;text-align:center;border:2px solid #e3f6ef}
+.pet .emoji{font-size:2rem}
+.locked{filter:grayscale(1);opacity:.5}
+.small{font-size:.82rem;color:#78909c;margin:10px 0 0}
+@media (max-height:560px){#choices{bottom:6px}#play,#jump,#collection{bottom:54px}#message{bottom:98px}button{padding:7px 11px}}
 </style>
 </head>
 <body><main class="app">
