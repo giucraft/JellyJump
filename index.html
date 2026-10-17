@@ -80,67 +80,106 @@ const backSeam=new THREE.CatmullRomCurve3([
 ]);
 const seam=new THREE.Mesh(new THREE.TubeGeometry(backSeam,28,.012,5,false),thread);seam.name='tiny plush seam';g.add(seam);
 if(id==='bunny'){
- for(let s of [-1,1]){ear(s*.29,2.28,-.02,.18,.48,.15);ear(s*.29,2.28,.105,.09,.34,.035,pink)}
- ball('cotton tail',0,.73,-.48,.24,.24,.22,cream);
+ // Long upright rabbit ears and a round cotton tail are clear from the chase camera.
+ for(let s of [-1,1]){
+  const e=ear(s*.29,2.28,-.04,.18,.5,.15);
+  e.rotation.z=s*-.08;
+  ear(s*.29,2.28,-.19,.09,.34,.035,pink);
+ }
+ ball('cotton tail',0,.73,-.53,.25,.25,.22,cream);
+ ball('rabbit haunch',0,.43,-.22,.48,.37,.28,fur);
 }else if(id==='kitten'){
- for(let s of [-1,1]){const e=new THREE.Mesh(new THREE.ConeGeometry(.25,.5,5),fur);e.position.set(s*.43,2.02,0);e.rotation.z=s*-.18;e.castShadow=true;g.add(e);ear(s*.43,2.02,.11,.12,.24,.035,pink)}
- const tail=new THREE.Mesh(new THREE.TorusGeometry(.29,.105,10,20,Math.PI*1.6),fur);tail.position.set(.28,.88,-.45);tail.rotation.set(Math.PI/2,0,-.4);g.add(tail);
+ for(let s of [-1,1]){
+  const e=new THREE.Mesh(new THREE.ConeGeometry(.25,.55,5),fur);
+  e.position.set(s*.43,2.02,-.04);e.rotation.z=s*-.18;e.castShadow=true;g.add(e);
+  ear(s*.43,2.02,-.19,.12,.24,.035,pink);
+ }
+ // A curled-up cat tail is visible behind the body.
+ const tail=new THREE.Mesh(new THREE.TorusGeometry(.3,.11,12,24,Math.PI*1.7),fur);
+ tail.position.set(.35,.94,-.57);tail.rotation.set(Math.PI/2,0,-.4);g.add(tail);
+ ball('kitten back patch',0,1.12,-.49,.3,.35,.035,mat('#aeb4c5'));
 }else if(id==='frog'){
- for(let s of [-1,1]){ball('eye bump',s*.36,2.03,0,.22,.23,.22,fur);ball('eye white',s*.36,2.05,.15,.15,.16,.11,cream);ball('pupil',s*.36,2.05,.245,.065,.085,.035,dark)}
- ball('tiny smile',0,1.32,.56,.16,.035,.025,dark);
+ // Two raised frog eyes and wide webbed-looking feet make the frog silhouette unmistakable.
+ for(let s of [-1,1]){
+  ball('frog eye bump',s*.36,2.03,-.04,.24,.25,.23,fur);
+  ball('frog rear eye white',s*.36,2.05,-.22,.16,.17,.09,cream);
+  ball('frog rear pupil',s*.36,2.05,-.29,.07,.09,.035,dark);
+  ball('frog back leg',s*.48,.38,-.24,.3,.24,.34,fur);
+  ball('frog web foot',s*.52,.16,-.04,.3,.1,.25,fur);
+ }
+ ball('frog back spot',0,1.13,-.51,.2,.16,.035,mat('#65b957'));
 }else if(id==='bear'){
- for(let s of [-1,1]){ear(s*.5,1.99,0,.23,.23,.17);ear(s*.5,1.99,.12,.12,.12,.045,pink)}
- ball('round tail',0,.72,-.46,.19,.19,.17,fur);
+ // Round ears and a little round bear tail, with no pointed cat/fox features.
+ for(let s of [-1,1]){
+  ear(s*.5,1.99,-.06,.24,.24,.18);
+  ear(s*.5,1.99,-.19,.13,.13,.05,mat('#8b6047'));
+ }
+ ball('round bear tail',0,.72,-.52,.2,.2,.18,fur);
 }else if(id==='fox'){
- // A fox should read as a fox from behind: tall pointed ears and a BIG brush tail.
+ // Pointed fox ears with dark tips and a huge bushy tail with a white tip.
  for(let s of [-1,1]){
-  const e=new THREE.Mesh(new THREE.ConeGeometry(.22,.62,7),fur);
-  e.position.set(s*.43,2.08,-.015);e.rotation.z=s*-.08;e.castShadow=true;g.add(e);
-  ball('dark fox ear tip',s*.43,2.34,-.035,.105,.12,.105,mat('#9a563c'));
+  const e=new THREE.Mesh(new THREE.ConeGeometry(.23,.65,7),fur);
+  e.position.set(s*.43,2.08,-.06);e.rotation.z=s*-.08;e.castShadow=true;g.add(e);
+  ball('dark fox ear tip',s*.43,2.36,-.12,.11,.13,.1,mat('#704b3b'));
+  ball('fox dark stocking',s*.34,.2,-.02,.2,.2,.22,mat('#704b3b'));
+  ball('fox pale shoulder patch',s*.43,1.13,-.49,.18,.24,.08,cream);
  }
- // Long, plush orange tail with the unmistakable creamy white tip.
- const brush=ball('large fox brush tail',.02,.72,-.78,.39,.4,.72,fur);
+ const brush=ball('large fox brush tail',.02,.72,-.78,.4,.42,.74,fur);
  brush.rotation.x=-.16;
- const tip=ball('white fox tail tip',.02,.67,-1.32,.27,.29,.31,cream);
+ const tip=ball('white fox tail tip',.02,.67,-1.37,.29,.3,.32,cream);
  tip.rotation.x=-.12;
- // Dark little stockings and soft pale shoulder patches add fox-like markings.
- for(let s of [-1,1]){
-  ball('fox dark stocking',s*.34,.2,.13,.2,.2,.22,mat('#704b3b'));
-  ball('fox pale shoulder',s*.43,1.13,-.31,.17,.23,.09,cream);
- }
 }else if(id==='lamb'){
- // Smooth fleece-like plush, with recognisable floppy lamb ears and a soft forelock.
+ // A lamb has drooping ears, a pale fleece cap and a little bobtail.
  for(let s of [-1,1]){
-  const earShape=ball('floppy lamb ear',s*.67,1.72,-.015,.19,.31,.13,cream);
+  const earShape=ball('long floppy lamb ear',s*.67,1.72,-.08,.2,.32,.14,cream);
   earShape.rotation.z=s*-.48;
  }
- ball('soft woolly forelock',0,2.03,-.18,.38,.22,.28,cream);
- ball('small smooth tail',0,.73,-.49,.18,.18,.18,cream);
+ ball('soft fleece cap',0,2.02,-.2,.48,.27,.32,cream);
+ ball('small lamb bobtail',0,.73,-.53,.19,.19,.18,cream);
+ ball('lamb fleece saddle',0,1.05,-.51,.48,.42,.08,cream);
 }else if(id==='axolotl'){
- for(let s of [-1,1])for(let j=0;j<3;j++)ball('gill',s*(.57+j*.08),1.68+(j-1)*.12,-.02,.11,.13,.1,pink);
- ball('tail fin',0,.8,-.62,.22,.35,.12,pink);
-}else if(id==='penguin'){
- // Rounded penguin body, dark back and little flipper wings.
- ball('dark penguin back',0,.96,-.43,.43,.55,.07,dark);
- ball('belly',0,.83,.39,.4,.5,.14,cream);
+ // External feathery gills fan out from both sides of the head; the tail has a fin.
  for(let s of [-1,1]){
-  const wing=ball('penguin flipper',s*.61,.91,-.08,.16,.39,.22,dark);
+  for(let j=0;j<3;j++){
+   const gill=ball('axolotl feathery gill',s*(.59+j*.08),1.68+(j-1)*.13,-.1,.1,.2,.09,pink);
+   gill.rotation.z=s*(j-1)*.35;
+  }
+ }
+ ball('axolotl broad tail fin',0,.8,-.7,.28,.4,.12,pink);
+ ball('axolotl back fin',0,1.08,-.52,.2,.28,.08,pink);
+}else if(id==='penguin'){
+ // A penguin is black-backed, white-bellied, with flat flippers and tiny orange feet.
+ ball('dark penguin back',0,.96,-.48,.48,.59,.1,dark);
+ ball('white belly',0,.83,.39,.4,.5,.14,cream);
+ for(let s of [-1,1]){
+  const wing=ball('penguin flipper',s*.61,.91,-.12,.17,.42,.22,dark);
   wing.rotation.z=s*-.22;
+  ball('penguin orange foot',s*.22,.13,-.02,.2,.09,.24,mat('#f2a34c'));
  }
 }else if(id==='dragon'){
+ // Dragon: horns, broad bat-like wings, a long tail and a row of back spikes.
  for(let s of [-1,1]){
-  const h=new THREE.Mesh(new THREE.ConeGeometry(.14,.42,8),mat('#79c987'));h.position.set(s*.38,2.1,0);g.add(h);
-  // Small rounded plush wings, visible behind the shoulders.
-  const wing=ball('dragon wing',s*.66,1.34,-.23,.34,.42,.09,mat('#79c987'));
+  const h=new THREE.Mesh(new THREE.ConeGeometry(.14,.42,8),mat('#79c987'));
+  h.position.set(s*.38,2.1,-.06);h.rotation.z=s*-.15;g.add(h);
+  const wing=ball('dragon wing',s*.68,1.34,-.25,.38,.44,.1,mat('#79c987'));
   wing.rotation.z=s*-.55;
+  ball('dragon wing tip',s*.84,1.12,-.27,.13,.2,.1,mat('#79c987'));
  }
- ball('long dragon tail',0,.66,-.76,.2,.2,.58,fur);
+ ball('long dragon tail',0,.66,-.82,.2,.2,.62,fur);
  const spikeMat=mat('#79c987');
- for(let i=0;i<3;i++){const sp=new THREE.Mesh(new THREE.ConeGeometry(.09,.22,6),spikeMat);sp.position.set(0,.83,-.45-i*.2);sp.rotation.x=-Math.PI/2;g.add(sp)}
+ for(let i=0;i<4;i++){
+  const sp=new THREE.Mesh(new THREE.ConeGeometry(.1,.25,6),spikeMat);
+  sp.position.set(0,.9,-.43-i*.19);sp.rotation.x=-Math.PI/2;g.add(sp);
+ }
 }else if(id==='unicorn'){
- const h=new THREE.Mesh(new THREE.ConeGeometry(.11,.48,8),mat('#ffd36e'));h.position.set(0,2.18,.1);h.rotation.x=-.2;g.add(h);
- for(let i=0;i<3;i++)ball('mane',-.18+i*.18,1.96,-.12,.12,.23,.13,mat(['#f4a9c8','#a9dff2','#d2b1f2'][i]));
- ball('tail',0,.7,-.55,.17,.19,.32,mat('#d9b6ec'));
+ // Unicorn: a visible spiral-style horn, flowing rainbow mane and colourful tail.
+ const h=new THREE.Mesh(new THREE.ConeGeometry(.12,.52,8),mat('#ffd36e'));
+ h.position.set(0,2.2,-.04);h.rotation.x=-.2;g.add(h);
+ for(let i=0;i<5;i++){
+  const mane=ball('rainbow unicorn mane',-.3+i*.15,1.96,-.28,.12,.27,.16,mat(['#f4a9c8','#a9dff2','#d2b1f2','#ffe18b','#a8dca8'][i]));
+  mane.rotation.z=(i-2)*.12;
+ }
+ for(let i=0;i<3;i++)ball('rainbow unicorn tail',-.1+i*.1,.72,-.78,.11,.2,.28,mat(['#f4a9c8','#a9dff2','#d2b1f2'][i]));
 }
 // Face details are kept on the front of each plush friend.
 if(id!=='frog'){for(let s of [-1,1]){ball('eye',s*.25,1.65,.52,.07,.095,.045,dark);ball('eye shine',s*.27,1.69,.56,.025,.03,.018,cream)}}
