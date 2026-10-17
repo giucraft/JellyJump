@@ -92,20 +92,51 @@ if(id==='bunny'){
  for(let s of [-1,1]){ear(s*.5,1.99,0,.23,.23,.17);ear(s*.5,1.99,.12,.12,.12,.045,pink)}
  ball('round tail',0,.72,-.46,.19,.19,.17,fur);
 }else if(id==='fox'){
- for(let s of [-1,1]){const e=new THREE.Mesh(new THREE.ConeGeometry(.23,.52,5),fur);e.position.set(s*.42,2.04,0);g.add(e)}
- ball('fluffy tail',.43,.75,-.55,.27,.3,.34,cream);
+ // A fox should read as a fox from behind: tall pointed ears and a BIG brush tail.
+ for(let s of [-1,1]){
+  const e=new THREE.Mesh(new THREE.ConeGeometry(.22,.62,7),fur);
+  e.position.set(s*.43,2.08,-.015);e.rotation.z=s*-.08;e.castShadow=true;g.add(e);
+  ball('dark fox ear tip',s*.43,2.34,-.035,.105,.12,.105,mat('#9a563c'));
+ }
+ // Long, plush orange tail with the unmistakable creamy white tip.
+ const brush=ball('large fox brush tail',.02,.72,-.78,.39,.4,.72,fur);
+ brush.rotation.x=-.16;
+ const tip=ball('white fox tail tip',.02,.67,-1.32,.27,.29,.31,cream);
+ tip.rotation.x=-.12;
+ // Dark little stockings and soft pale shoulder patches add fox-like markings.
+ for(let s of [-1,1]){
+  ball('fox dark stocking',s*.34,.2,.13,.2,.2,.22,mat('#704b3b'));
+  ball('fox pale shoulder',s*.43,1.13,-.31,.17,.23,.09,cream);
+ }
 }else if(id==='lamb'){
- // Keep the lamb's head and body smooth, without separate wool bumps.
- ball('small smooth tail',0,.73,-.47,.18,.18,.18,cream);
+ // Smooth fleece-like plush, with recognisable floppy lamb ears and a soft forelock.
+ for(let s of [-1,1]){
+  const earShape=ball('floppy lamb ear',s*.67,1.72,-.015,.19,.31,.13,cream);
+  earShape.rotation.z=s*-.48;
+ }
+ ball('soft woolly forelock',0,2.03,-.18,.38,.22,.28,cream);
+ ball('small smooth tail',0,.73,-.49,.18,.18,.18,cream);
 }else if(id==='axolotl'){
  for(let s of [-1,1])for(let j=0;j<3;j++)ball('gill',s*(.57+j*.08),1.68+(j-1)*.12,-.02,.11,.13,.1,pink);
  ball('tail fin',0,.8,-.62,.22,.35,.12,pink);
 }else if(id==='penguin'){
- ball('back patch',0,.93,-.43,.37,.48,.035,dark);
+ // Rounded penguin body, dark back and little flipper wings.
+ ball('dark penguin back',0,.96,-.43,.43,.55,.07,dark);
  ball('belly',0,.83,.39,.4,.5,.14,cream);
+ for(let s of [-1,1]){
+  const wing=ball('penguin flipper',s*.61,.91,-.08,.16,.39,.22,dark);
+  wing.rotation.z=s*-.22;
+ }
 }else if(id==='dragon'){
- for(let s of [-1,1]){const h=new THREE.Mesh(new THREE.ConeGeometry(.14,.42,8),mat('#79c987'));h.position.set(s*.38,2.1,0);g.add(h)}
- ball('little tail',0,.66,-.57,.13,.16,.36,fur);
+ for(let s of [-1,1]){
+  const h=new THREE.Mesh(new THREE.ConeGeometry(.14,.42,8),mat('#79c987'));h.position.set(s*.38,2.1,0);g.add(h);
+  // Small rounded plush wings, visible behind the shoulders.
+  const wing=ball('dragon wing',s*.66,1.34,-.23,.34,.42,.09,mat('#79c987'));
+  wing.rotation.z=s*-.55;
+ }
+ ball('long dragon tail',0,.66,-.76,.2,.2,.58,fur);
+ const spikeMat=mat('#79c987');
+ for(let i=0;i<3;i++){const sp=new THREE.Mesh(new THREE.ConeGeometry(.09,.22,6),spikeMat);sp.position.set(0,.83,-.45-i*.2);sp.rotation.x=-Math.PI/2;g.add(sp)}
 }else if(id==='unicorn'){
  const h=new THREE.Mesh(new THREE.ConeGeometry(.11,.48,8),mat('#ffd36e'));h.position.set(0,2.18,.1);h.rotation.x=-.2;g.add(h);
  for(let i=0;i<3;i++)ball('mane',-.18+i*.18,1.96,-.12,.12,.23,.13,mat(['#f4a9c8','#a9dff2','#d2b1f2'][i]));
