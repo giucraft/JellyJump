@@ -14,7 +14,7 @@
 <h1>JellyJump ✨</h1><p class="sub">A fluffy little jumping adventure!</p>
 <section class="panel">
 <canvas id="game" width="720" height="460" aria-label="JellyJump game. Tap or press space to jump."></canvas>
-<div class="stats"><span>⭐ <b id="score">0</b></span><span>💧 <b id="drops">0</b></span><span>🏆 <b id="best">0</b></span></div>
+<button id="pause" aria-label="Pause">Ⅱ</button><button id="friendsTop">📖<span>Friends</span></button><div class="stats"><span>⭐ <b id="score">0</b></span><span>💧 <b id="drops">0</b></span><span>🏆 <b id="best">0</b></span></div>
 <div id="message">Choose a fluffy friend and tap Play!</div>
 <div class="actions">
 <button id="play">▶ Play</button><button id="jump" class="secondary">⬆ Jump</button><button id="collection">📖 Friends</button>
@@ -43,7 +43,7 @@ const pets=[
 ];
 let selected='bunny',unlocked=new Set(['bunny','kitten','frog','bear']),running=false,over=false,score=0,drops=0,best=Number(localStorage.jjBest||0),speed=4,frame=0;
 let player={x:115,y:320,vy:0,onGround:true},obstacles=[],gems=[];
-$('best').textContent=best;
+$('best').textContent=best;$('jump').style.display='none';
 function drawPet(x,y,size,id){
  const p=pets.find(v=>v.id===id)||pets[0], fur=p.color;
  ctx.save();ctx.translate(x,y);ctx.lineJoin='round';
@@ -110,18 +110,18 @@ function update(){
  if(frame%105===0)gems.push({x:740,y:270+Math.random()*65});
  obstacles.forEach(o=>o.x-=speed);gems.forEach(g=>g.x-=speed);obstacles=obstacles.filter(o=>o.x>-60);gems=gems.filter(g=>g.x>-20);
  for(const o of obstacles){if(player.x+32>o.x&&player.x-32<o.x+o.w+18&&player.y+35>345){end();break}}
- gems=gems.filter(g=>{if(Math.abs(g.x-player.x)<35&&Math.abs(g.y-player.y)<38){drops++;$('drops').textContent=drops;unlock();return false}return true});
+ gems=gems.filter(g=>{if(Math.abs(g.x-player.x)<35&&Math.abs(g.y-player.y)<38){drops++;$('drops').textContent=drops;$('goalCount').textContent=(drops%100)+' / 100';$('goalFill').style.width=(drops%100)+'%';unlock();return false}return true});
  score++;$('score').textContent=score;if(score>best){best=score;$('best').textContent=best;localStorage.jjBest=best}
  draw();requestAnimationFrame(update);
 }
 function jump(){if(running&&player.onGround){player.vy=-13;player.onGround=false}}
-function start(){score=0;frame=0;speed=4;obstacles=[];gems=[];player.y=320;player.vy=0;running=true;over=false;$('score').textContent='0';$('message').textContent='Go, fluffy friend!';$('play').textContent='↻ Restart';draw();requestAnimationFrame(update)}
+function start(){score=0;$('play').textContent='⬆ Jump';frame=0;speed=4;obstacles=[];gems=[];player.y=320;player.vy=0;running=true;over=false;$('score').textContent='0';$('message').textContent='Go, fluffy friend!';$('play').textContent='↻ Restart';draw();requestAnimationFrame(update)}
 function end(){running=false;over=true;$('message').textContent='You collected '+drops+' jelly drops. Great jumping!';$('play').textContent='↻ Play again';draw()}
 function unlock(){for(const p of pets){if(!unlocked.has(p.id)&&drops>=p.cost){unlocked.add(p.id);$('message').textContent='New friend discovered: '+p.name+'! ✨';renderBook();break}}}
 function renderBook(){$('cards').innerHTML='';pets.forEach(p=>{let el=document.createElement('div');el.className='pet'+(unlocked.has(p.id)?'':' locked');el.innerHTML='<div class="emoji">'+(unlocked.has(p.id)?p.emoji:'❔')+'</div><b>'+(unlocked.has(p.id)?p.name:'Mystery friend')+'</b><div class="small">'+(unlocked.has(p.id)?'Discovered!':p.cost+' jelly drops')+'</div>';el.onclick=()=>{if(unlocked.has(p.id)){selected=p.id;$('message').textContent=p.name+' is ready to jump!';draw()}};$('cards').appendChild(el)})}
-$('play').onclick=start;$('jump').onclick=jump;canvas.addEventListener('pointerdown',()=>{if(running)jump()});document.addEventListener('keydown',e=>{if(e.code==='Space'||e.code==='ArrowUp'){e.preventDefault();if(!running)start();else jump()}});
+$('play').onclick=()=>{if(!running)start();else jump()};$('jump').onclick=jump;canvas.addEventListener('pointerdown',()=>{if(running)jump()});document.addEventListener('keydown',e=>{if(e.code==='Space'||e.code==='ArrowUp'){e.preventDefault();if(!running)start();else jump()}});
 document.querySelectorAll('[data-pet]').forEach(b=>b.onclick=()=>{selected=b.dataset.pet;$('message').textContent='You chose '+b.textContent+'!';draw()});
-$('collection').onclick=()=>{let b=$('book');b.style.display=b.style.display==='block'?'none':'block';renderBook()};
+$('collection').onclick=()=>{let b=$('book');b.style.display=b.style.display==='block'?'none':'block';renderBook()};$('friendsTop').onclick=()=>$('collection').click();$('pause').onclick=()=>{if(running){running=false;$('message').textContent='Paused! Tap Jump to continue.'}else if(!over)start()};
 renderBook();draw();
 if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
 })();
