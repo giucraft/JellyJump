@@ -57,7 +57,25 @@ const pets=[{id:'bunny',name:'Bunny',emoji:'🐰',color:'#fff0d8',cost:0},{id:'k
 let selected='bunny',unlocked=new Set(['bunny','kitten','frog','bear']),running=false,paused=false,over=false,score=0,drops=0,best=Number(localStorage.jjBest||0),speed=17,lane=0,targetLane=0,vy=0,onGround=true,jumpTime=0,spawnClock=0,gemClock=0,objects=[],clock=new THREE.Clock();
 $('best').textContent=best;
 function makePet(id){
-const p=pets.find(v=>v.id===id)||pets[0],fur=new THREE.MeshStandardMaterial({color:p.color,roughness:1}),g=new THREE.Group();
+const p=pets.find(v=>v.id===id)||pets[0],g=new THREE.Group();
+function makePlushMaterial(color){
+ const texCanvas=document.createElement('canvas');texCanvas.width=256;texCanvas.height=256;
+ const ctx=texCanvas.getContext('2d');ctx.fillStyle=color;ctx.fillRect(0,0,256,256);
+ // Tiny irregular fibres and soft woven flecks give the fabric a velvety plush finish.
+ for(let i=0;i<5200;i++){
+  const x=Math.random()*256,y=Math.random()*256,len=1+Math.random()*5;
+  ctx.strokeStyle=Math.random()>.5?'rgba(255,255,255,.13)':'rgba(70,55,45,.075)';
+  ctx.lineWidth=.35+Math.random()*.65;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+(Math.random()-.5)*1.5,y+len);ctx.stroke();
+ }
+ for(let i=0;i<900;i++){
+  ctx.fillStyle=Math.random()>.5?'rgba(255,255,255,.11)':'rgba(65,48,42,.06)';
+  ctx.beginPath();ctx.arc(Math.random()*256,Math.random()*256,.35+Math.random()*.8,0,Math.PI*2);ctx.fill();
+ }
+ const texture=new THREE.CanvasTexture(texCanvas);texture.colorSpace=THREE.SRGBColorSpace;
+ texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(1,1);texture.anisotropy=renderer.capabilities.getMaxAnisotropy();
+ return new THREE.MeshStandardMaterial({color:0xffffff,map:texture,bumpMap:texture,bumpScale:.028,roughness:1});
+}
+const fur=makePlushMaterial(p.color),g=new THREE.Group();
 const cream=mat('#fff5e7'),dark=mat('#39404d'),pink=mat('#f2a9bd'),paw=mat(p.color);
 function ball(name,x,y,z,sx,sy,sz,m){const o=new THREE.Mesh(new THREE.SphereGeometry(1,24,18),m);o.name=name;o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.castShadow=true;g.add(o);return o}
 function ear(x,y,z,sx,sy,sz,m=fur){return ball('ear',x,y,z,sx,sy,sz,m)}
