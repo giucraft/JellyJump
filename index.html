@@ -18,7 +18,7 @@
 <button id="pause" aria-label="Pause">Ⅱ</button><button id="sound" aria-label="Toggle sound">🔊</button><button id="friendsTop">📖<small>Friends</small></button>
 <div class="stats"><span>⭐ <b id="score">0</b></span><span>💧 <b id="drops">0</b></span><span>🏆 <b id="best">0</b></span></div>
 <div id="message">Choose a fluffy friend and tap Play!</div>
-<div class="hint">← → change lanes · Space / ↑ jump · Swipe on mobile</div>
+<div class="hint">← → lanes · ↑ jump · ↓ slide · Swipe on mobile</div>
 <div class="bottom"><button id="play">▶ Play</button></div>
 <div id="choices">
 <button data-pet="bunny" class="active"><b>🐰</b>Bunny</button><button data-pet="kitten"><b>🐱</b>Kitten</button><button data-pet="frog"><b>🐸</b>Frog</button><button data-pet="bear"><b>🐻</b>Bear</button>
@@ -54,7 +54,7 @@ for(let i=0;i<30;i++){const z=-i*4-3;tree(-6-Math.random()*2,z,.8+Math.random()*
 const flowerMats=['#ff7e9b','#ffe17b','#fff','#b99af4'].map(c=>mat(c));
 for(let i=0;i<70;i++){const g=new THREE.Group();for(let k=0;k<5;k++){const petal=new THREE.Mesh(new THREE.SphereGeometry(.09,8,6),flowerMats[i%4]);petal.position.set(Math.cos(k*Math.PI*2/5)*.13,.32,Math.sin(k*Math.PI*2/5)*.13);g.add(petal)}const centre=new THREE.Mesh(new THREE.SphereGeometry(.07,8,6),mat('#f3b64e'));centre.position.y=.34;g.add(centre);g.position.set((Math.random()>.5?1:-1)*(4.8+Math.random()*3),0,-Math.random()*100);scene.add(g);scenery.push(g)}
 const pets=[{id:'bunny',name:'Bunny',emoji:'🐰',color:'#fff0d8',cost:0},{id:'kitten',name:'Kitten',emoji:'🐱',color:'#d9dce8',cost:0},{id:'frog',name:'Frog',emoji:'🐸',color:'#8ed46d',cost:0},{id:'bear',name:'Bear',emoji:'🐻',color:'#b98153',cost:0},{id:'fox',name:'Fox',emoji:'🦊',color:'#f6a05b',cost:8},{id:'lamb',name:'Lamb',emoji:'🐑',color:'#fff8ec',cost:16},{id:'axolotl',name:'Axolotl',emoji:'🩷',color:'#f5a9c6',cost:25},{id:'penguin',name:'Penguin',emoji:'🐧',color:'#8abbdc',cost:36},{id:'dragon',name:'Dragon',emoji:'🐲',color:'#9b91df',cost:50},{id:'unicorn',name:'Unicorn',emoji:'🦄',color:'#e8b4e4',cost:70}];
-let selected='bunny',unlocked=new Set(['bunny','kitten','frog','bear']),running=false,paused=false,over=false,score=0,drops=0,best=Number(localStorage.jjBest||0),speed=17,lane=0,targetLane=0,vy=0,onGround=true,jumpTime=0,spawnClock=0,gemClock=0,objects=[],clock=new THREE.Clock();
+let selected='bunny',unlocked=new Set(['bunny','kitten','frog','bear']),running=false,paused=false,over=false,score=0,drops=0,best=Number(localStorage.jjBest||0),speed=17,lane=0,targetLane=0,vy=0,onGround=true,jumpTime=0,slideTimer=0,spawnClock=0,gemClock=0,objects=[],clock=new THREE.Clock();
 // Cute original audio made with Web Audio: no downloads or external music files.
 let audioCtx=null,muted=false,musicTimer=null,musicStep=0;
 const melody=[523.25,659.25,783.99,659.25,587.33,698.46,783.99,698.46,523.25,659.25,880,783.99,698.46,659.25,587.33,523.25];
@@ -200,24 +200,44 @@ g.userData.feet=g.children.filter(o=>o.name==='foot');return g
 }
 let player=makePet(selected);player.rotation.y=Math.PI;player.position.set(0,0,3);scene.add(player);
 function changePet(id){selected=id;scene.remove(player);player=makePet(id);player.rotation.y=Math.PI;player.position.set(lane*2,0,3);scene.add(player);document.querySelectorAll('[data-pet]').forEach(b=>b.classList.toggle('active',b.dataset.pet===id));}
-function makeObstacle(l,z){const g=new THREE.Group();const log=new THREE.Mesh(new THREE.CylinderGeometry(.38,.38,1.55,12),wood);log.rotation.z=Math.PI/2;log.position.y=.43;log.castShadow=true;g.add(log);const cap=mat('#d69a65');for(let s of [-1,1]){const c=new THREE.Mesh(new THREE.CircleGeometry(.32,12),cap);c.rotation.y=s*Math.PI/2;c.position.set(s*.78,.43,0);g.add(c)}g.position.set(l*2,0,z);scene.add(g);objects.push({group:g,type:'obstacle',lane:l,hit:false})}
+function makeObstacle(l,z,kind='log'){
+ const g=new THREE.Group();
+ if(kind==='log'){
+  const log=new THREE.Mesh(new THREE.CylinderGeometry(.38,.38,1.55,12),wood);log.rotation.z=Math.PI/2;log.position.y=.43;log.castShadow=true;g.add(log);
+  const cap=mat('#d69a65');for(let s of [-1,1]){const c=new THREE.Mesh(new THREE.CircleGeometry(.32,12),cap);c.rotation.y=s*Math.PI/2;c.position.set(s*.78,.43,0);g.add(c)}
+ }else if(kind==='barrier'){
+  const beam=new THREE.Mesh(new THREE.BoxGeometry(1.75,.28,.32),mat('#b97848'));beam.position.y=2.02;beam.castShadow=true;g.add(beam);
+  for(let s of [-1,1]){const post=new THREE.Mesh(new THREE.BoxGeometry(.16,1.95,.2),mat('#d49a65'));post.position.set(s*.76,1.0,0);post.castShadow=true;g.add(post)}
+  const stripe=new THREE.Mesh(new THREE.BoxGeometry(1.35,.055,.34),mat('#ffe19a'));stripe.position.set(0,2.02,.02);g.add(stripe);
+ }else if(kind==='rock'){
+  const rock=new THREE.Mesh(new THREE.DodecahedronGeometry(.82,1),mat('#8c9a9b'));rock.position.y=.72;rock.scale.set(1,.92,.9);rock.rotation.set(.2,.4,.15);rock.castShadow=true;rock.receiveShadow=true;g.add(rock);
+  const highlight=new THREE.Mesh(new THREE.DodecahedronGeometry(.28,0),mat('#b9c5bd'));highlight.position.set(-.28,1.18,.48);highlight.scale.set(1,.45,.35);g.add(highlight);
+ }
+ g.position.set(l*2,0,z);scene.add(g);objects.push({group:g,type:kind,lane:l,hit:false});
+}
 function makeGem(l,z){const m=new THREE.Mesh(new THREE.OctahedronGeometry(.43,1),mat('#ff76a8',.25));m.position.set(l*2,1.2,z);m.castShadow=true;scene.add(m);objects.push({group:m,type:'gem',lane:l,hit:false})}
-function spawn(){const l=Math.floor(Math.random()*3)-1;makeObstacle(l,-58-Math.random()*8);if(Math.random()<.8)makeGem(Math.floor(Math.random()*3)-1,-68)}
+function spawn(){const l=Math.floor(Math.random()*3)-1;const kinds=['log','log','barrier','rock'];const kind=kinds[Math.floor(Math.random()*kinds.length)];makeObstacle(l,-58-Math.random()*8,kind);if(Math.random()<.8)makeGem(Math.floor(Math.random()*3)-1,-68)}
 function setLane(n){targetLane=Math.max(-1,Math.min(1,targetLane+n))}
 function jump(){if(running&&onGround){vy=9.5;onGround=false;jumpTime=0;effect('jump')}}
-function move(e){if(e.code==='ArrowLeft'||e.code==='KeyA'){setLane(-1)}else if(e.code==='ArrowRight'||e.code==='KeyD'){setLane(1)}else if(e.code==='Space'||e.code==='ArrowUp'||e.code==='KeyW'){e.preventDefault();if(!running&&!over)start();else jump()}}
+function slide(){if(running&&onGround&&slideTimer<=0){slideTimer=.78}}
+function move(e){if(e.code==='ArrowLeft'||e.code==='KeyA'){setLane(-1)}else if(e.code==='ArrowRight'||e.code==='KeyD'){setLane(1)}else if(e.code==='ArrowDown'||e.code==='KeyS'){e.preventDefault();slide()}else if(e.code==='Space'||e.code==='ArrowUp'||e.code==='KeyW'){e.preventDefault();if(!running&&!over)start();else jump()}}
 document.addEventListener('keydown',move);
-let touchX=0,touchY=0;canvas.addEventListener('pointerdown',e=>{touchX=e.clientX;touchY=e.clientY});canvas.addEventListener('pointerup',e=>{if(!running)return;const dx=e.clientX-touchX,dy=e.clientY-touchY;if(Math.abs(dx)>25){setLane(dx>0?1:-1)}else if(dy<-20||Math.abs(dx)<20){jump()}});
+let touchX=0,touchY=0;canvas.addEventListener('pointerdown',e=>{touchX=e.clientX;touchY=e.clientY});canvas.addEventListener('pointerup',e=>{if(!running)return;const dx=e.clientX-touchX,dy=e.clientY-touchY;if(Math.abs(dx)>25){setLane(dx>0?1:-1)}else if(dy>20){slide()}else if(dy<-20||Math.abs(dx)<20){jump()}});
 function renderBook(){$('cards').innerHTML='';pets.forEach(p=>{const el=document.createElement('div');el.className='pet'+(unlocked.has(p.id)?'':' locked');el.innerHTML='<div class="emoji">'+(unlocked.has(p.id)?p.emoji:'❔')+'</div><b>'+(unlocked.has(p.id)?p.name:'Mystery friend')+'</b><div>'+(unlocked.has(p.id)?'Tap to choose':p.cost+' jelly drops')+'</div>';el.onclick=()=>{if(unlocked.has(p.id)){changePet(p.id);$('book').style.display='none';$('message').textContent=p.name+' is ready to run! ✨'}};$('cards').appendChild(el)})}
 function unlock(){for(const p of pets){if(!unlocked.has(p.id)&&drops>=p.cost){unlocked.add(p.id);$('message').textContent='New friend discovered: '+p.name+'! ✨';effect('unlock');renderBook();break}}}
 function clearObjects(){objects.forEach(o=>scene.remove(o.group));objects=[]}
-function start(){clearObjects();score=0;lane=0;targetLane=0;vy=0;onGround=true;speed=17;spawnClock=0;gemClock=0;running=true;paused=false;over=false;$('score').textContent='0';$('play').textContent='Ⅱ Pause';$('message').textContent='Go, fluffy friend!';player.position.set(0,0,3);clock.getDelta();audioReady();startMusic()}
+function start(){clearObjects();score=0;lane=0;targetLane=0;vy=0;onGround=true;slideTimer=0;speed=17;spawnClock=0;gemClock=0;running=true;paused=false;over=false;$('score').textContent='0';$('play').textContent='Ⅱ Pause';$('message').textContent='Go, fluffy friend!';player.position.set(0,0,3);clock.getDelta();audioReady();startMusic()}
 function end(){const collectedThisRun=drops;running=false;over=true;stopMusic();effect('end');drops=0;$('drops').textContent='0';$('goalCount').textContent='0 / 100';$('goalFill').style.width='0%';$('play').textContent='↻ Play again';$('message').textContent='Lovely run! You collected '+collectedThisRun+' jelly drops. Your friends are safe! 💛';}
 function update(dt){if(!running)return;score+=Math.round(dt*30);$('score').textContent=score;speed=Math.min(29,17+score*.004);spawnClock+=dt;gemClock+=dt;if(spawnClock>Math.max(.8,1.55-score*.0005)){spawn();spawnClock=0}
 lane+=(targetLane-lane)*Math.min(1,dt*12);player.position.x=lane*2;player.position.y=Math.max(0,player.position.y+vy*dt);if(!onGround){vy-=23*dt;if(player.position.y<=0){player.position.y=0;vy=0;onGround=true}}player.rotation.z+=(lane*-.08-player.rotation.z)*dt*7;
-const t=clock.elapsedTime;const squish=Math.sin(t*13)*.075;player.scale.set(1-squish*.55,1+squish,1-squish*.55);player.userData.feet.forEach((f,i)=>{f.position.z=Math.sin(t*13+i*Math.PI)*.12;f.position.y=.22+Math.max(0,Math.sin(t*13+i*Math.PI))*.09});
+const t=clock.elapsedTime;const squish=Math.sin(t*13)*.075;if(slideTimer>0)slideTimer=Math.max(0,slideTimer-dt);const ducking=slideTimer>0;player.scale.set(ducking?1.12:1-squish*.55,ducking?.48:1+squish,ducking?1.08:1-squish*.55);player.userData.feet.forEach((f,i)=>{f.position.z=Math.sin(t*13+i*Math.PI)*.12;f.position.y=.22+Math.max(0,Math.sin(t*13+i*Math.PI))*.09});
 for(let i=objects.length-1;i>=0;i--){const o=objects[i];o.group.position.z+=speed*dt;if(o.type==='gem'){o.group.rotation.y+=dt*2.7;o.group.rotation.z+=dt*1.2}
-if(!o.hit&&Math.abs(o.group.position.z-3)<.85&&o.lane===Math.round(lane)){o.hit=true;if(o.type==='gem'){drops++;effect('gem');$('drops').textContent=drops;$('goalCount').textContent=(drops%100)+' / 100';$('goalFill').style.width=(drops%100)+'%';scene.remove(o.group);objects.splice(i,1);unlock();continue}else if(player.position.y<.85){end();break}}
+if(!o.hit&&Math.abs(o.group.position.z-3)<.85&&o.lane===Math.round(lane)){
+ o.hit=true;
+ if(o.type==='gem'){drops++;effect('gem');$('drops').textContent=drops;$('goalCount').textContent=(drops%100)+' / 100';$('goalFill').style.width=(drops%100)+'%';scene.remove(o.group);objects.splice(i,1);unlock();continue}
+ const collision=(o.type==='log'&&player.position.y<.85)||(o.type==='barrier'&&!ducking)||(o.type==='rock');
+ if(collision){end();break}
+}
 if(o.group.position.z>12){scene.remove(o.group);objects.splice(i,1)}}
 scenery.forEach(o=>{o.position.z+=speed*dt;if(o.position.z>12)o.position.z=-100-Math.random()*25});clouds.forEach(c=>{c.position.x+=dt*.35;if(c.position.x>19)c.position.x=-19});
 camera.position.x+=(lane*.38-camera.position.x)*dt*2;camera.lookAt(lane*.3,1.2,-5)}
