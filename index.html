@@ -57,7 +57,7 @@ const pets=[{id:'bunny',name:'Bunny',emoji:'🐰',color:'#fff0d8',cost:0},{id:'k
 let selected='bunny',unlocked=new Set(['bunny','kitten','frog','bear']),running=false,paused=false,over=false,score=0,drops=0,best=Number(localStorage.jjBest||0),speed=17,lane=0,targetLane=0,vy=0,onGround=true,jumpTime=0,spawnClock=0,gemClock=0,objects=[],clock=new THREE.Clock();
 $('best').textContent=best;
 function makePet(id){
-const p=pets.find(v=>v.id===id)||pets[0],fur=new THREE.MeshStandardMaterial({color:p.color,roughness:.78}),g=new THREE.Group();
+const p=pets.find(v=>v.id===id)||pets[0],fur=new THREE.MeshPhysicalMaterial({color:p.color,roughness:1,sheen:.55,sheenColor:new THREE.Color('#fff1f5'),sheenRoughness:1}),g=new THREE.Group();
 const cream=mat('#fff5e7'),dark=mat('#39404d'),pink=mat('#f2a9bd'),paw=mat(p.color);
 function ball(name,x,y,z,sx,sy,sz,m){const o=new THREE.Mesh(new THREE.SphereGeometry(1,48,32),m);o.name=name;o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.castShadow=true;g.add(o);return o}
 function ear(x,y,z,sx,sy,sz,m=fur){return ball('ear',x,y,z,sx,sy,sz,m)}
@@ -127,7 +127,7 @@ function start(){clearObjects();score=0;lane=0;targetLane=0;vy=0;onGround=true;s
 function end(){running=false;over=true;$('play').textContent='↻ Play again';$('message').textContent='Lovely run! You collected '+drops+' jelly drops!';}
 function update(dt){if(!running)return;score+=Math.round(dt*30);$('score').textContent=score;speed=Math.min(29,17+score*.004);spawnClock+=dt;gemClock+=dt;if(spawnClock>Math.max(.8,1.55-score*.0005)){spawn();spawnClock=0}
 lane+=(targetLane-lane)*Math.min(1,dt*12);player.position.x=lane*2;player.position.y=Math.max(0,player.position.y+vy*dt);if(!onGround){vy-=23*dt;if(player.position.y<=0){player.position.y=0;vy=0;onGround=true}}player.rotation.z+=(lane*-.08-player.rotation.z)*dt*7;
-const t=clock.elapsedTime;player.userData.feet.forEach((f,i)=>{f.position.z=Math.sin(t*13+i*Math.PI)*.12;f.position.y=.22+Math.max(0,Math.sin(t*13+i*Math.PI))*.09});
+const t=clock.elapsedTime;const squish=Math.sin(t*13)*.035;player.scale.set(1-squish*.45,1+squish,1-squish*.45);player.userData.feet.forEach((f,i)=>{f.position.z=Math.sin(t*13+i*Math.PI)*.12;f.position.y=.22+Math.max(0,Math.sin(t*13+i*Math.PI))*.09});
 for(let i=objects.length-1;i>=0;i--){const o=objects[i];o.group.position.z+=speed*dt;if(o.type==='gem'){o.group.rotation.y+=dt*2.7;o.group.rotation.z+=dt*1.2}
 if(!o.hit&&Math.abs(o.group.position.z-3)<.85&&o.lane===Math.round(lane)){o.hit=true;if(o.type==='gem'){drops++;$('drops').textContent=drops;$('goalCount').textContent=(drops%100)+' / 100';$('goalFill').style.width=(drops%100)+'%';scene.remove(o.group);objects.splice(i,1);unlock();continue}else if(player.position.y<.85){end();break}}
 if(o.group.position.z>12){scene.remove(o.group);objects.splice(i,1)}}
