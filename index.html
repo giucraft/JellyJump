@@ -57,7 +57,7 @@ const pets=[{id:'bunny',name:'Bunny',emoji:'🐰',color:'#fff0d8',cost:0},{id:'k
 let selected='bunny',unlocked=new Set(['bunny','kitten','frog','bear']),running=false,paused=false,over=false,score=0,drops=0,best=Number(localStorage.jjBest||0),speed=17,lane=0,targetLane=0,vy=0,onGround=true,jumpTime=0,spawnClock=0,gemClock=0,objects=[],clock=new THREE.Clock();
 $('best').textContent=best;
 function makePet(id){
-const p=pets.find(v=>v.id===id)||pets[0],fur=new THREE.MeshStandardMaterial({color:p.color,roughness:1}),g=new THREE.Group();
+const p=pets.find(v=>v.id===id)||pets[0],fur=new THREE.MeshStandardMaterial({color:p.color,roughness:.78}),g=new THREE.Group();
 const cream=mat('#fff5e7'),dark=mat('#39404d'),pink=mat('#f2a9bd'),paw=mat(p.color);
 function ball(name,x,y,z,sx,sy,sz,m){const o=new THREE.Mesh(new THREE.SphereGeometry(1,24,18),m);o.name=name;o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.castShadow=true;g.add(o);return o}
 function ear(x,y,z,sx,sy,sz,m=fur){return ball('ear',x,y,z,sx,sy,sz,m)}
@@ -70,15 +70,7 @@ for(let s of [-1,1]){
  ball('foot',s*.32,.2,.13,.27,.17,.31,fur);
  ball('paw pad',s*.32,.105,.34,.12,.035,.08,pink);
 }
-// Fuzzy little tufts on the back and crown catch the light as the friend runs.
-for(let i=0;i<13;i++){
- const a=(i/13)*Math.PI*2, x=Math.cos(a)*.48, y=1.53+Math.sin(a)*.43;
- ball('head fluff',x,y,-.43,.105,.12,.09,fur);
-}
-for(let i=0;i<8;i++){
- const a=(i/8)*Math.PI*2;
- ball('body fluff',Math.cos(a)*.39,.78+Math.sin(a)*.39,-.29,.10,.12,.09,fur);
-}
+// Smooth, rounded plush shapes without added surface bumps.
 if(id==='bunny'){
  for(let s of [-1,1]){ear(s*.29,2.28,-.02,.18,.48,.15);ear(s*.29,2.28,.105,.09,.34,.035,pink)}
  ball('cotton tail',0,.73,-.48,.24,.24,.22,cream);
