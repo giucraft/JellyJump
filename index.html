@@ -59,7 +59,7 @@ $('best').textContent=best;
 function makePet(id){
 const p=pets.find(v=>v.id===id)||pets[0],fur=new THREE.MeshStandardMaterial({color:p.color,roughness:.78}),g=new THREE.Group();
 const cream=mat('#fff5e7'),dark=mat('#39404d'),pink=mat('#f2a9bd'),paw=mat(p.color);
-function ball(name,x,y,z,sx,sy,sz,m){const o=new THREE.Mesh(new THREE.SphereGeometry(1,24,18),m);o.name=name;o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.castShadow=true;g.add(o);return o}
+function ball(name,x,y,z,sx,sy,sz,m){const o=new THREE.Mesh(new THREE.SphereGeometry(1,48,32),m);o.name=name;o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.castShadow=true;g.add(o);return o}
 function ear(x,y,z,sx,sy,sz,m=fur){return ball('ear',x,y,z,sx,sy,sz,m)}
 // Soft toy proportions: a plump little body, oversized head and stubby paws.
 ball('plush body',0,.78,0,.53,.62,.43,fur);
@@ -87,8 +87,8 @@ if(id==='bunny'){
  for(let s of [-1,1]){const e=new THREE.Mesh(new THREE.ConeGeometry(.23,.52,5),fur);e.position.set(s*.42,2.04,0);g.add(e)}
  ball('fluffy tail',.43,.75,-.55,.27,.3,.34,cream);
 }else if(id==='lamb'){
- for(let i=0;i<9;i++)ball('wool curl',Math.cos(i*.7)*.47,1.58+Math.sin(i*.7)*.35,-.18,.19,.2,.17,cream);
- ball('wool tail',0,.73,-.47,.2,.2,.2,cream);
+ // Keep the lamb's head and body smooth, without separate wool bumps.
+ ball('small smooth tail',0,.73,-.47,.18,.18,.18,cream);
 }else if(id==='axolotl'){
  for(let s of [-1,1])for(let j=0;j<3;j++)ball('gill',s*(.57+j*.08),1.68+(j-1)*.12,-.02,.11,.13,.1,pink);
  ball('tail fin',0,.8,-.62,.22,.35,.12,pink);
