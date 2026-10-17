@@ -1,0 +1,19 @@
+{
+  "name": "JellyJump",
+  "short_name": "JellyJump",
+  "description": "A fluffy little jumping adventure",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#d9fbf2",
+  "theme_color": "#9cefe6",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
