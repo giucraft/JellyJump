@@ -40,6 +40,15 @@ const camera=new THREE.PerspectiveCamera(58,innerWidth/innerHeight,.1,130);camer
 scene.add(new THREE.HemisphereLight(0xffffff,0x8bbd8a,2));
 const sun=new THREE.DirectionalLight(0xffffff,2.2);sun.position.set(-5,12,7);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);scene.add(sun);
 const mat=(color,roughness=.85)=>new THREE.MeshStandardMaterial({color,roughness});
+// A tiny generated fabric-grain bump map gives every friend a soft, tactile plush finish.
+const fleeceCanvas=document.createElement('canvas');fleeceCanvas.width=128;fleeceCanvas.height=128;
+const fleeceCtx=fleeceCanvas.getContext('2d');fleeceCtx.fillStyle='#888';fleeceCtx.fillRect(0,0,128,128);
+for(let i=0;i<2600;i++){
+ const x=Math.random()*128,y=Math.random()*128,len=1+Math.random()*4;
+ fleeceCtx.strokeStyle=Math.random()>.5?'rgba(255,255,255,.22)':'rgba(0,0,0,.2)';
+ fleeceCtx.lineWidth=.5+Math.random()*.7;fleeceCtx.beginPath();fleeceCtx.moveTo(x,y);fleeceCtx.lineTo(x+len*.35,y-len);fleeceCtx.stroke();
+}
+const fleeceTexture=new THREE.CanvasTexture(fleeceCanvas);fleeceTexture.wrapS=fleeceTexture.wrapT=THREE.RepeatWrapping;fleeceTexture.repeat.set(2,2);fleeceTexture.needsUpdate=true;
 const grass=mat('#79ca83'),path=mat('#e9bd7d'),edge=mat('#fff0c9'),wood=mat('#a96e42'),leafMats=['#72c77b','#8bd17f','#f3a9b5'].map(c=>mat(c)),white=mat('#fff7e8'),dark=mat('#394b5b'),pink=mat('#f4b5c7');
 const ground=new THREE.Mesh(new THREE.PlaneGeometry(100,150),grass);ground.rotation.x=-Math.PI/2;ground.position.set(0,-.18,-35);ground.receiveShadow=true;scene.add(ground);
 const track=new THREE.Mesh(new THREE.PlaneGeometry(8,150),path);track.rotation.x=-Math.PI/2;track.position.set(0,-.12,-35);track.receiveShadow=true;scene.add(track);
@@ -91,7 +100,7 @@ function refreshSoundButton(){$('sound').textContent=muted?'🔇':'🔊';$('soun
 
 $('best').textContent=best;
 function makePet(id){
-const p=pets.find(v=>v.id===id)||pets[0],fur=new THREE.MeshStandardMaterial({color:p.color,roughness:1,metalness:0}),g=new THREE.Group();
+const p=pets.find(v=>v.id===id)||pets[0],fur=new THREE.MeshStandardMaterial({color:p.color,roughness:1,metalness:0,bumpMap:fleeceTexture,bumpScale:.045}),g=new THREE.Group();
 const cream=mat('#fff5e7'),dark=mat('#39404d'),pink=mat('#f2a9bd'),paw=mat(p.color);
 function ball(name,x,y,z,sx,sy,sz,m){const o=new THREE.Mesh(new THREE.SphereGeometry(1,48,32),m);o.name=name;o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.castShadow=true;g.add(o);return o}
 function ear(x,y,z,sx,sy,sz,m=fur){return ball('ear',x,y,z,sx,sy,sz,m)}
@@ -241,7 +250,7 @@ if(id==='bunny'){
  for(let i=0;i<3;i++)ball('rainbow unicorn tail',-.1+i*.1,.72,-.78,.11,.2,.28,mat(['#f4a9c8','#a9dff2','#d2b1f2'][i]));
 }
 // Fine, short fleece tufts catch the light and soften the silhouette.
-const fluffGeo=new THREE.ConeGeometry(.009,.038,3);
+const fluffGeo=new THREE.ConeGeometry(.012,.05,3);
 const fluff=new THREE.InstancedMesh(fluffGeo,fur,760);
 fluff.name='soft plush fleece';
 const up=new THREE.Vector3(0,1,0),normal=new THREE.Vector3(),quat=new THREE.Quaternion(),dummy=new THREE.Object3D();
