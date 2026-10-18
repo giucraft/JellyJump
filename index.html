@@ -22,7 +22,7 @@
 <div class="bottom"><button id="play">▶ Play</button></div>
  <div class="mobile-controls" aria-label="Movement controls"><button id="leftMove" aria-label="Move left">◀</button><button id="rightMove" aria-label="Move right">▶</button></div>
 <div id="choices">
-<button data-pet="bunny" class="active"><b>🐰</b>Bunny</button><button data-pet="kitten"><b>🐱</b>Kitten</button><button data-pet="frog"><b>🐸</b>Frog</button><button data-pet="bear"><b>🐻</b>Bear</button>
+<button data-pet="bunny" class="active"><b>🐰</b>Bunny</button><button data-pet="kitten"><b>🐱</b>Kitten</button><button data-pet="frog"><b>🐸</b>Frog</button><button data-pet="bear"><b>🐻</b>Bear</button><button data-pet="dog"><b>🐶</b>Dog</button>
 </div>
 <div class="progress">✨ Friend discoveries<div id="goalCount">0 / 100</div><div class="bar"><div class="fill" id="goalFill"></div></div></div>
 <div class="book" id="book"><h2>✨ Friend book</h2><p style="text-align:center">Collect jelly drops to discover new friends!</p><div class="cards" id="cards"></div></div>
@@ -54,8 +54,8 @@ function tree(x,z,s){const g=new THREE.Group();const trunk=new THREE.Mesh(new TH
 for(let i=0;i<30;i++){const z=-i*4-3;tree(-6-Math.random()*2,z,.8+Math.random()*.6);tree(6+Math.random()*2,z,.8+Math.random()*.6)}
 const flowerMats=['#ff7e9b','#ffe17b','#fff','#b99af4'].map(c=>mat(c));
 for(let i=0;i<70;i++){const g=new THREE.Group();for(let k=0;k<5;k++){const petal=new THREE.Mesh(new THREE.SphereGeometry(.09,8,6),flowerMats[i%4]);petal.position.set(Math.cos(k*Math.PI*2/5)*.13,.32,Math.sin(k*Math.PI*2/5)*.13);g.add(petal)}const centre=new THREE.Mesh(new THREE.SphereGeometry(.07,8,6),mat('#f3b64e'));centre.position.y=.34;g.add(centre);g.position.set((Math.random()>.5?1:-1)*(4.8+Math.random()*3),0,-Math.random()*100);scene.add(g);scenery.push(g)}
-const pets=[{id:'bunny',name:'Bunny',emoji:'🐰',color:'#fff0d8',cost:0},{id:'kitten',name:'Kitten',emoji:'🐱',color:'#d9dce8',cost:0},{id:'frog',name:'Frog',emoji:'🐸',color:'#8ed46d',cost:0},{id:'bear',name:'Bear',emoji:'🐻',color:'#b98153',cost:0},{id:'fox',name:'Fox',emoji:'🦊',color:'#f6a05b',cost:8},{id:'lamb',name:'Lamb',emoji:'🐑',color:'#fff8ec',cost:16},{id:'axolotl',name:'Axolotl',emoji:'🩷',color:'#f5a9c6',cost:25},{id:'penguin',name:'Penguin',emoji:'🐧',color:'#8abbdc',cost:36},{id:'dragon',name:'Dragon',emoji:'🐲',color:'#9b91df',cost:50},{id:'unicorn',name:'Unicorn',emoji:'🦄',color:'#e8b4e4',cost:70}];
-let selected='bunny',unlocked=new Set(['bunny','kitten','frog','bear']),running=false,paused=false,over=false,score=0,drops=0,best=Number(localStorage.jjBest||0),speed=17,lane=0,targetLane=0,vy=0,onGround=true,jumpTime=0,slideTimer=0,turnClock=0,turnTimer=0,spawnClock=0,gemClock=0,objects=[],clock=new THREE.Clock();
+const pets=[{id:'bunny',name:'Bunny',emoji:'🐰',color:'#fff0d8',cost:0},{id:'kitten',name:'Kitten',emoji:'🐱',color:'#d9dce8',cost:0},{id:'frog',name:'Frog',emoji:'🐸',color:'#8ed46d',cost:0},{id:'bear',name:'Bear',emoji:'🐻',color:'#b98153',cost:0},{id:'dog',name:'Dog',emoji:'🐶',color:'#c99162',cost:0},{id:'fox',name:'Fox',emoji:'🦊',color:'#f6a05b',cost:8},{id:'lamb',name:'Lamb',emoji:'🐑',color:'#fff8ec',cost:16},{id:'axolotl',name:'Axolotl',emoji:'🩷',color:'#f5a9c6',cost:25},{id:'penguin',name:'Penguin',emoji:'🐧',color:'#8abbdc',cost:36},{id:'dragon',name:'Dragon',emoji:'🐲',color:'#9b91df',cost:50},{id:'unicorn',name:'Unicorn',emoji:'🦄',color:'#e8b4e4',cost:70}];
+let selected='bunny',unlocked=new Set(['bunny','kitten','frog','bear','dog']),running=false,paused=false,over=false,score=0,drops=0,best=Number(localStorage.jjBest||0),speed=17,lane=0,targetLane=0,vy=0,onGround=true,jumpTime=0,slideTimer=0,turnClock=0,turnTimer=0,spawnClock=0,gemClock=0,objects=[],clock=new THREE.Clock();
 // Cute original audio made with Web Audio: no downloads or external music files.
 let audioCtx=null,muted=false,musicTimer=null,musicStep=0;
 // Original 8-bar JellyJump soundtrack: a little pop/adventure tune with melody, chords, bass and a light beat.
@@ -152,6 +152,28 @@ if(id==='bunny'){
   ear(s*.5,1.99,-.19,.13,.13,.05,mat('#8b6047'));
  }
  ball('round bear tail',0,.72,-.52,.2,.2,.18,fur);
+}else if(id==='dog'){
+ // A cuddly floppy-eared puppy with a soft muzzle, cream chest and curled tail.
+ for(let s of [-1,1]){
+  const e=ball('floppy puppy ear',s*.62,1.69,-.08,.23,.43,.19,fur);
+  e.rotation.z=s*.34;
+  const inner=ball('puppy ear lining',s*.62,1.68,.085,.12,.29,.035,mat('#a96f55'));
+  inner.rotation.z=s*.34;
+ }
+ // Cream muzzle and chest patch give the puppy a recognisable dog face.
+ ball('puppy muzzle',0,1.38,.66,.37,.24,.22,cream);
+ ball('puppy chin',0,1.25,.65,.24,.11,.15,cream);
+ ball('puppy nose',0,1.48,.86,.105,.075,.065,dark);
+ ball('puppy chest bib',0,.9,.43,.39,.43,.12,cream);
+ // A floppy, curved tail sticks out behind the little puppy.
+ const tail=new THREE.Mesh(new THREE.TorusGeometry(.27,.105,12,24,Math.PI*1.45),fur);
+ tail.name='curly puppy tail';tail.position.set(.04,.92,-.57);tail.rotation.set(Math.PI/2,0,-.7);g.add(tail);
+ // One soft patch makes this puppy feel like a distinct little plush friend.
+ ball('puppy eye patch',-.28,1.68,.535,.16,.2,.045,mat('#8a5a43'));
+ // A tiny fabric collar with a little golden tag.
+ const collar=new THREE.Mesh(new THREE.TorusGeometry(.43,.055,10,32),mat('#83c9e8'));
+ collar.name='puppy collar';collar.position.set(0,1.08,.02);collar.rotation.x=Math.PI/2;g.add(collar);
+ ball('puppy collar tag',0,1.01,.46,.085,.11,.035,mat('#ffd36e'));
 }else if(id==='fox'){
  // Pointed fox ears with dark tips and a huge bushy tail with a white tip.
  for(let s of [-1,1]){
