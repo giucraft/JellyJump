@@ -59,7 +59,7 @@ const clouds=[];for(let i=0;i<9;i++){const g=new THREE.Group();for(let j=0;j<4;j
 const scenery=[];
 const flowerMats=['#ff7e9b','#ffe17b','#fff','#b99af4'].map(c=>mat(c));
 for(let i=0;i<70;i++){const g=new THREE.Group();for(let k=0;k<5;k++){const petal=new THREE.Mesh(new THREE.SphereGeometry(.09,8,6),flowerMats[i%4]);petal.position.set(Math.cos(k*Math.PI*2/5)*.13,.32,Math.sin(k*Math.PI*2/5)*.13);g.add(petal)}const centre=new THREE.Mesh(new THREE.SphereGeometry(.07,8,6),mat('#f3b64e'));centre.position.y=.34;g.add(centre);g.position.set((Math.random()>.5?1:-1)*(4.8+Math.random()*3),0,-Math.random()*100);scene.add(g);scenery.push(g)}
-const pets=[{id:'bunny',name:'Bunny',emoji:'🐰',color:'#fff0d8',cost:0},{id:'kitten',name:'Kitten',emoji:'🐱',color:'#d9dce8',cost:0},{id:'frog',name:'Frog',emoji:'🐸',color:'#8ed46d',cost:0},{id:'bear',name:'Bear',emoji:'🐻',color:'#b98153',cost:0},{id:'dog',name:'Dog',emoji:'🐶',color:'#c99162',cost:0},{id:'fox',name:'Fox',emoji:'🦊',color:'#f6a05b',cost:8},{id:'lamb',name:'Lamb',emoji:'🐑',color:'#fff8ec',cost:16},{id:'axolotl',name:'Axolotl',emoji:'🩷',color:'#f5a9c6',cost:25},{id:'penguin',name:'Penguin',emoji:'🐧',color:'#8abbdc',cost:36},{id:'dragon',name:'Dragon',emoji:'🐲',color:'#9b91df',cost:50},{id:'unicorn',name:'Unicorn',emoji:'🦄',color:'#e8b4e4',cost:70}];
+const pets=[{id:'bunny',name:'Bunny',emoji:'🐰',color:'#fff0d8',cost:0},{id:'kitten',name:'Kitten',emoji:'🐱',color:'#d9dce8',cost:0},{id:'frog',name:'Frog',emoji:'🐸',color:'#8ed46d',cost:0},{id:'bear',name:'Bear',emoji:'🐻',color:'#b98153',cost:0},{id:'dog',name:'Dog',emoji:'🐶',color:'#d7ae79',cost:0},{id:'fox',name:'Fox',emoji:'🦊',color:'#f6a05b',cost:8},{id:'lamb',name:'Lamb',emoji:'🐑',color:'#fff8ec',cost:16},{id:'axolotl',name:'Axolotl',emoji:'🩷',color:'#f5a9c6',cost:25},{id:'penguin',name:'Penguin',emoji:'🐧',color:'#8abbdc',cost:36},{id:'dragon',name:'Dragon',emoji:'🐲',color:'#9b91df',cost:50},{id:'unicorn',name:'Unicorn',emoji:'🦄',color:'#e8b4e4',cost:70}];
 let selected='bunny',unlocked=new Set(['bunny','kitten','frog','bear','dog']),running=false,paused=false,over=false,score=0,drops=0,best=Number(localStorage.jjBest||0),speed=17,lane=0,targetLane=0,vy=0,onGround=true,jumpTime=0,slideTimer=0,turnClock=0,turnTimer=0,spawnClock=0,gemClock=0,objects=[],clock=new THREE.Clock();
 // Cute original audio made with Web Audio: no downloads or external music files.
 let audioCtx=null,muted=false,musicTimer=null,musicStep=0;
@@ -101,14 +101,14 @@ const cream=mat('#fff5e7'),dark=mat('#39404d'),pink=mat('#f2a9bd'),paw=mat(p.col
 function ball(name,x,y,z,sx,sy,sz,m){const o=new THREE.Mesh(new THREE.SphereGeometry(1,48,32),m);o.name=name;o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.castShadow=true;g.add(o);return o}
 function ear(x,y,z,sx,sy,sz,m=fur){return ball('ear',x,y,z,sx,sy,sz,m)}
 // Extra-plump stuffed-animal silhouette: oversized soft head, pear-shaped tummy and mitten paws.
-ball('plush body',0,.79,0,.62,.69,.49,fur);
-ball('big plush head',0,1.59,0,.77,.72,.68,fur);
+ball('plush body',0,.76,0,.57,.62,.46,fur);
+ball('big plush head',0,1.52,0,.69,.63,.61,fur);
 for(let s of [-1,1]){
- ball('soft shoulder',s*.48,1.12,.015,.29,.34,.3,fur);
- ball('arm',s*.62,.88,.02,.27,.39,.27,fur);
- ball('paw',s*.65,.59,.08,.25,.22,.24,fur);
- ball('foot',s*.34,.19,.13,.32,.2,.34,fur);
- ball('paw pad',s*.34,.075,.39,.13,.035,.075,pink);
+ ball('soft shoulder',s*.43,1.08,.015,.25,.29,.27,fur);
+ ball('arm',s*.57,.86,.02,.22,.33,.23,fur);
+ ball('paw',s*.59,.59,.08,.21,.18,.21,fur);
+ ball('foot',s*.31,.17,.13,.27,.17,.29,fur);
+ ball('paw pad',s*.31,.065,.37,.11,.03,.06,pink);
 }
 // A subtle stitched back seam makes the friend read as a sewn plush toy.
 const thread=new THREE.MeshStandardMaterial({color:new THREE.Color(p.color).multiplyScalar(.78),roughness:1});
@@ -246,16 +246,16 @@ if(id==='bunny'){
  for(let i=0;i<3;i++)ball('rainbow unicorn tail',-.1+i*.1,.72,-.78,.11,.2,.28,mat(['#f4a9c8','#a9dff2','#d2b1f2'][i]));
 }
 // Fine, short fleece tufts catch the light and soften the silhouette.
-const fluffGeo=new THREE.ConeGeometry(.012,.05,3);
-const fluff=new THREE.InstancedMesh(fluffGeo,fur,760);
+const fluffGeo=new THREE.ConeGeometry(.012,.045,3);
+const fluff=new THREE.InstancedMesh(fluffGeo,fur,1500);
 fluff.name='soft plush fleece';
 const up=new THREE.Vector3(0,1,0),normal=new THREE.Vector3(),quat=new THREE.Quaternion(),dummy=new THREE.Object3D();
-for(let i=0;i<760;i++){
- const head=i>=430,rx=head?.77:.62,ry=head?.72:.69,rz=head?.68:.49;
+for(let i=0;i<1500;i++){
+ const head=i>=850,rx=head?.69:.63,ry=head?.63:.62,rz=head?.61:.46;
  const a=Math.random()*Math.PI*2,u=Math.random()*2-1;
  const ring=Math.sqrt(1-u*u);
- const x=rx*ring*Math.cos(a),y=(head?1.59:.79)+ry*u,z=rz*ring*Math.sin(a);
- normal.set(x/(rx*rx), (y-(head?1.59:.79))/(ry*ry), z/(rz*rz)).normalize();
+ const x=rx*ring*Math.cos(a),y=(head?1.52:.76)+ry*u,z=rz*ring*Math.sin(a);
+ normal.set(x/(rx*rx), (y-(head?1.52:.76))/(ry*ry), z/(rz*rz)).normalize();
  dummy.position.set(x+normal.x*.003,y+normal.y*.003,z+normal.z*.003);
  quat.setFromUnitVectors(up,normal);dummy.quaternion.copy(quat);
  dummy.scale.set(1,.75+Math.random()*.65,1);dummy.updateMatrix();fluff.setMatrixAt(i,dummy.matrix);
@@ -270,10 +270,10 @@ if(id==='lamb'){
 }
 // Face details are kept on the front of each plush friend.
 if(id!=='frog'){
- for(let s of [-1,1]){ball('eye',s*.25,1.65,.57,.07,.095,.045,dark);ball('eye shine',s*.27,1.69,.61,.025,.03,.018,cream)}
- ball('soft muzzle',0,1.36,.57,.3,.2,.14,cream);
- ball('nose',0,1.42,.70,.075,.055,.04,pink);
- for(let s of [-1,1])ball('cheek',s*.4,1.35,.52,.12,.075,.035,pink);
+ for(let s of [-1,1]){ball('eye',s*.235,1.57,.545,.061,.078,.04,dark);ball('eye shine',s*.25,1.60,.58,.021,.025,.014,cream)}
+ ball('soft muzzle',0,1.32,.555,.27,.17,.12,cream);
+ ball('nose',0,1.37,.665,.065,.05,.035,pink);
+ for(let s of [-1,1])ball('cheek',s*.37,1.31,.50,.095,.06,.03,pink);
 }
 g.userData.feet=g.children.filter(o=>o.name==='foot');return g
 }
