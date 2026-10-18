@@ -58,7 +58,7 @@ const clouds=[];for(let i=0;i<9;i++){const g=new THREE.Group();for(let j=0;j<4;j
 // Trees and flowers form a scrolling enchanted garden
 const scenery=[];
 function tree(x,z,s){const g=new THREE.Group();const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.17,.25,1.6,8),wood);trunk.position.y=.8;trunk.castShadow=true;g.add(trunk);for(let k=0;k<4;k++){const crown=new THREE.Mesh(new THREE.SphereGeometry(.85-k*.08,14,12),leafMats[(k+Math.floor(Math.random()*3))%3]);crown.position.set((k%2-.5)*.55,1.7+Math.floor(k/2)*.55,0);crown.castShadow=true;g.add(crown)}g.position.set(x,0,z);g.scale.setScalar(s);scene.add(g);scenery.push(g)}
-for(let i=0;i<30;i++){const z=-i*4-3;tree(-6-Math.random()*2,z,.8+Math.random()*.6);tree(6+Math.random()*2,z,.8+Math.random()*.6)}
+for(let i=0;i<22;i++){const z=-i*5-7;tree(-5.4-Math.random()*.9,z,1.05+Math.random()*.35);tree(5.4+Math.random()*.9,z,1.05+Math.random()*.35)}
 const flowerMats=['#ff7e9b','#ffe17b','#fff','#b99af4'].map(c=>mat(c));
 const flowerMats=['#ff7e9b','#ffe17b','#fff','#b99af4'].map(c=>mat(c));
 for(let i=0;i<70;i++){const g=new THREE.Group();for(let k=0;k<5;k++){const petal=new THREE.Mesh(new THREE.SphereGeometry(.09,8,6),flowerMats[i%4]);petal.position.set(Math.cos(k*Math.PI*2/5)*.13,.32,Math.sin(k*Math.PI*2/5)*.13);g.add(petal)}const centre=new THREE.Mesh(new THREE.SphereGeometry(.07,8,6),mat('#f3b64e'));centre.position.y=.34;g.add(centre);g.position.set((Math.random()>.5?1:-1)*(4.8+Math.random()*3),0,-Math.random()*100);scene.add(g);scenery.push(g)}
