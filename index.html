@@ -267,7 +267,7 @@ function makeObstacle(l,z,kind='log'){
  }
  g.position.set(l*2,0,z);scene.add(g);objects.push({group:g,type:kind,lane:l,hit:false});
 }
-function makeGem(l,z){const m=new THREE.Mesh(new THREE.OctahedronGeometry(.43,1),mat('#ff76a8',.25));m.position.set(l*2,1.2,z);m.castShadow=true;scene.add(m);objects.push({group:m,type:'gem',lane:l,hit:false})}
+function makeGem(l,z){const gemColours=['#ff76a8','#55d9e8','#ffe16b','#a98bff','#78d879','#ffad66'];const colour=gemColours[Math.floor(Math.random()*gemColours.length)];const m=new THREE.Mesh(new THREE.OctahedronGeometry(.43,1),new THREE.MeshStandardMaterial({color:colour,roughness:.22,metalness:.08,emissive:colour,emissiveIntensity:.12}));m.position.set(l*2,1.2,z);m.castShadow=true;scene.add(m);objects.push({group:m,type:'gem',lane:l,hit:false})}
 function spawn(){const l=Math.floor(Math.random()*3)-1;const kinds=['log','log','barrier','rock'];const kind=kinds[Math.floor(Math.random()*kinds.length)];makeObstacle(l,-58-Math.random()*8,kind);if(Math.random()<.8)makeGem(Math.floor(Math.random()*3)-1,-68)}
 function setLane(n){targetLane=Math.max(-1,Math.min(1,targetLane+n))}
 function jump(){if(running&&onGround){vy=9.5;onGround=false;jumpTime=0;effect('jump')}}
