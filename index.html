@@ -218,6 +218,29 @@ if(id==='bunny'){
  }
  for(let i=0;i<3;i++)ball('rainbow unicorn tail',-.1+i*.1,.72,-.78,.11,.2,.28,mat(['#f4a9c8','#a9dff2','#d2b1f2'][i]));
 }
+// Fine, short fleece tufts catch the light and soften the silhouette.
+const fluffGeo=new THREE.ConeGeometry(.009,.038,3);
+const fluff=new THREE.InstancedMesh(fluffGeo,fur,760);
+fluff.name='soft plush fleece';
+const up=new THREE.Vector3(0,1,0),normal=new THREE.Vector3(),quat=new THREE.Quaternion(),dummy=new THREE.Object3D();
+for(let i=0;i<760;i++){
+ const head=i>=430,rx=head?.77:.62,ry=head?.72:.69,rz=head?.68:.49;
+ const a=Math.random()*Math.PI*2,u=Math.random()*2-1;
+ const ring=Math.sqrt(1-u*u);
+ const x=rx*ring*Math.cos(a),y=(head?1.59:.79)+ry*u,z=rz*ring*Math.sin(a);
+ normal.set(x/(rx*rx), (y-(head?1.59:.79))/(ry*ry), z/(rz*rz)).normalize();
+ dummy.position.set(x+normal.x*.003,y+normal.y*.003,z+normal.z*.003);
+ quat.setFromUnitVectors(up,normal);dummy.quaternion.copy(quat);
+ dummy.scale.set(1,.75+Math.random()*.65,1);dummy.updateMatrix();fluff.setMatrixAt(i,dummy.matrix);
+}
+fluff.instanceMatrix.needsUpdate=true;fluff.castShadow=false;fluff.frustumCulled=false;g.add(fluff);
+// Lamb fleece gets extra rounded woolly curls around its cap and back.
+if(id==='lamb'){
+ for(let i=0;i<22;i++){
+  const a=i*Math.PI*(3-Math.sqrt(5)),y=1.82+(i%5)*.055;
+  const curl=ball('little fleece curl',Math.cos(a)*.42,y,Math.sin(a)*.28-.08,.13,.13,.13,cream);
+ }
+}
 // Face details are kept on the front of each plush friend.
 if(id!=='frog'){
  for(let s of [-1,1]){ball('eye',s*.25,1.65,.57,.07,.095,.045,dark);ball('eye shine',s*.27,1.69,.61,.025,.03,.018,cream)}
