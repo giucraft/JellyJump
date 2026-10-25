@@ -387,7 +387,7 @@ $('sound').onclick=()=>{muted=!muted;refreshSoundButton();if(muted)stopMusic();e
 $('friendsTop').onclick=()=>{$('book').style.display=$('book').style.display==='block'?'none':'block';renderBook()};
 document.querySelectorAll('[data-pet]').forEach(b=>b.onclick=()=>{changePet(b.dataset.pet);$('message').textContent='You chose '+b.textContent.trim()+'!'});
 buildWaveMenu();setWave(1);$('play').textContent='▶ Play';
-$('gameTitle').classList.add('bam-title');$('gameTitle').style.display='block';
+$('gameTitle').classList.remove('bam-title');$('gameTitle').style.display='block';
 // Try to begin the soundtrack as soon as the page loads. Browsers may block audible autoplay until the first user gesture.
 audioReady();startMenuMusic();
 const resumePageMusic=()=>{if(!muted){audioReady();if(!musicTimer){if(running)startMusic();else startMenuMusic()}}};
