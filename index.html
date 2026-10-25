@@ -70,8 +70,9 @@ const waveNames=['Sunny Shores','Candy Garden','Cloud Castle','Big Splash','Rain
 let audioCtx=null,muted=false,musicTimer=null,musicStep=0;
 // Original 8-bar JellyJump soundtrack: a little pop/adventure tune with melody, chords, bass and a light beat.
 const melody=[72,76,79,76,74,76,79,83,81,79,76,74,72,74,76,79, 76,79,84,79,76,79,81,84,83,81,79,76,74,76,79,81, 81,84,88,84,83,81,79,76,81,79,76,74,72,74,76,79, 77,81,84,81,79,77,76,72,74,76,77,79,76,74,72];
-const chords=[[48,52,55],[43,47,50],[45,48,52],[41,45,48],[48,52,55],[43,47,50],[45,48,52],[41,45,48]];
-const bass=[36,31,33,29,36,31,33,29];
+// Classic I–IV–V–I in C, then a lift into G major: G–C–D–G.
+const chords=[[48,52,55],[53,57,60],[55,59,62],[48,52,55],[55,59,62],[60,64,67],[50,54,57],[55,59,62]];
+const bass=[36,41,43,36,43,48,38,43];
 function audioReady(){if(!audioCtx){const AC=window.AudioContext||window.webkitAudioContext;if(AC)audioCtx=new AC()}if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume()}
 function tone(freq,duration=.12,wave='sine',volume=.045,delay=0){if(muted)return;audioReady();if(!audioCtx)return;const now=audioCtx.currentTime+delay,osc=audioCtx.createOscillator(),gain=audioCtx.createGain();osc.type=wave;osc.frequency.setValueAtTime(freq,now);gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(volume,now+.012);gain.gain.exponentialRampToValueAtTime(.0001,now+duration);osc.connect(gain);gain.connect(audioCtx.destination);osc.start(now);osc.stop(now+duration+.025)}
 function midi(n){return 440*Math.pow(2,(n-69)/12)}
@@ -80,8 +81,9 @@ function effect(kind){if(muted)return;if(kind==='jump'){tone(420,.12,'sine',.055
 function musicTick(){
  if(muted)return;
  const step=musicStep%64,bar=Math.floor(step/8),beat=step%8,delay=0,offset=[0,3,5,7,9][(currentWave-1)%5];
+ const keyLift=bar>=4?7:0;
  const note=melody[step];
- if(note!==null)tone(midi(note+offset),.22,currentWave===3?'sine':currentWave===4?'square':'triangle',.016,delay);
+ if(note!==null)tone(midi(note+keyLift+offset),.22,currentWave===3?'sine':currentWave===4?'square':'triangle',.016,delay);
  if(beat===0){
   chords[bar].forEach((n,i)=>tone(midi(n+12+offset),.82,currentWave===2?'triangle':'sine',.006,i*.012));
   tone(midi(bass[bar]+offset),.42,'sine',.025);
