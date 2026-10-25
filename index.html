@@ -81,6 +81,12 @@ const menuComposition={root:53,scale:[0,2,4,5,7,9,11],progression:[0,3,4,0,5,4],
 let audioCtx=null,muted=false,musicTimer=null,musicStep=0,musicInterval=625,activeMusicMode='menu',activeComposition=menuComposition;
 function audioReady(){if(!audioCtx){const AC=window.AudioContext||window.webkitAudioContext;if(AC)audioCtx=new AC()}if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume()}
 function tone(freq,duration=.12,wave='sine',volume=.045,delay=0){if(muted)return;audioReady();if(!audioCtx)return;const now=audioCtx.currentTime+delay,osc=audioCtx.createOscillator(),gain=audioCtx.createGain();osc.type=wave;osc.frequency.setValueAtTime(freq,now);gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(volume,now+.018);gain.gain.exponentialRampToValueAtTime(.0001,now+duration);osc.connect(gain);gain.connect(audioCtx.destination);osc.start(now);osc.stop(now+duration+.03)}
+function effect(kind){
+ if(kind==='gem'){tone(880,.12,'sine',.055);tone(1175,.16,'triangle',.035,.07)}
+ else if(kind==='jump'){tone(420,.1,'triangle',.025)}
+ else if(kind==='unlock'){tone(660,.14,'sine',.04);tone(880,.18,'sine',.04,.12);tone(1100,.22,'sine',.04,.25)}
+ else if(kind==='end'){tone(220,.22,'triangle',.025)}
+}
 function midi(n){return 440*Math.pow(2,(n-69)/12)}
 function composedMusicTick(){
  if(muted||!activeComposition)return;
