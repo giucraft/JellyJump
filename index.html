@@ -396,27 +396,28 @@ function move(e){if(e.code==='ArrowLeft'||e.code==='KeyA'){setLane(-1)}else if(e
 document.addEventListener('keydown',move);
 let touchX=0,touchY=0;canvas.addEventListener('pointerdown',e=>{touchX=e.clientX;touchY=e.clientY});canvas.addEventListener('pointerup',e=>{if(!running)return;const dx=e.clientX-touchX,dy=e.clientY-touchY;if(Math.abs(dx)>14){setLane(dx>0?1:-1)}else if(dy>16){slide()}else if(dy<-16||Math.abs(dx)<14){jump()}});
 function friendIcon(id,color,locked=false){
- const fur=color||({bunny:'#fff0d8',kitten:'#d9dce8',frog:'#8ed46d',bear:'#b98153',dog:'#d7ae79',fox:'#f6a05b',lamb:'#fff8ec',axolotl:'#f5a9c6',penguin:'#8abbdc',dragon:'#9b91df',unicorn:'#e8b4e4',dolphin:'#69c9e8',deer:'#c98c58',otter:'#a97956'}[id]||'#d9c9b5');
- const ears={
- bunny:'<path d="M13 20C5 3 9 -1 15 8L20 21Z M31 20C37 3 34 -1 29 8L25 21Z" fill="'+fur+'" stroke="#fff" stroke-width="1.5"/><path d="M12 15L10 6Q11 4 13 8L16 17Z M32 15L34 6Q33 4 31 8L28 17Z" fill="#f2a9bd"/>',
- kitten:'<path d="M8 23L10 5L23 17Z M32 17L45 5L43 23Z" fill="'+fur+'" stroke="#fff" stroke-width="1.5"/><path d="M12 15L13 9L18 17Z M36 17L41 9L40 15Z" fill="#efa9b8"/>',
- frog:'<circle cx="13" cy="16" r="8" fill="'+fur+'" stroke="#fff" stroke-width="1.5"/><circle cx="37" cy="16" r="8" fill="'+fur+'" stroke="#fff" stroke-width="1.5"/>',
- bear:'<circle cx="12" cy="20" r="8" fill="'+fur+'" stroke="#fff" stroke-width="1.5"/><circle cx="38" cy="20" r="8" fill="'+fur+'" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="20" r="4" fill="#e6b4a0"/><circle cx="38" cy="20" r="4" fill="#e6b4a0"/>',
- dog:'<path d="M10 17Q1 12 4 31Q7 39 17 29Z M40 17Q49 12 46 31Q43 39 33 29Z" fill="#b98557" stroke="#fff" stroke-width="1.5"/>',
- fox:'<path d="M7 25L9 3L25 18Z M43 25L41 3L25 18Z" fill="'+fur+'" stroke="#fff" stroke-width="1.5"/><path d="M11 17L12 8L20 19Z M39 17L38 8L30 19Z" fill="#fff0d8"/>',
- lamb:'<circle cx="11" cy="19" r="7" fill="#fff" stroke="#e8d8c8"/><circle cx="39" cy="19" r="7" fill="#fff" stroke="#e8d8c8"/><circle cx="18" cy="12" r="7" fill="#fff"/><circle cx="32" cy="12" r="7" fill="#fff"/>',
- axolotl:'<path d="M9 23L2 11L7 8L13 20L10 5L15 4L17 21Z M41 23L48 11L43 8L37 20L40 5L35 4L33 21Z" fill="#f08db5" stroke="#fff" stroke-width="1"/>',
- penguin:'<path d="M8 20Q3 11 1 20L8 31Z M42 20Q47 11 49 20L42 31Z" fill="#344f6a"/>',
- dragon:'<path d="M11 22L7 5L21 15Z M39 22L43 5L29 15Z" fill="#9b91df" stroke="#fff" stroke-width="1.5"/><path d="M20 9L23 2L26 10L29 2L32 11Z" fill="#a9e5a1"/>',
- unicorn:'<path d="M25 18L29 0L34 18Z" fill="#ffd36e" stroke="#fff" stroke-width="1.5"/><path d="M9 23L12 9L22 19Z M41 23L38 9L28 19Z" fill="'+fur+'" stroke="#fff" stroke-width="1.5"/>',
- dolphin:'<path d="M10 24Q1 14 5 9Q15 13 18 23Z M39 24Q48 14 45 9Q35 13 32 23Z" fill="'+fur+'"/><path d="M25 10L31 2L33 16Z" fill="'+fur+'"/>',
- deer:'<path d="M13 19L9 4L4 1 M9 9L3 8 M36 19L41 4L46 1 M41 9L47 8" fill="none" stroke="#8a5a37" stroke-width="2.5" stroke-linecap="round"/><path d="M9 20L16 15L21 22Z M41 20L34 15L29 22Z" fill="'+fur+'"/>',
- otter:'<circle cx="12" cy="20" r="6" fill="'+fur+'" stroke="#fff"/><circle cx="38" cy="20" r="6" fill="'+fur+'" stroke="#fff"/>'
- }[id]||'';
- const face=id==='penguin'?'<ellipse cx="25" cy="31" rx="11" ry="12" fill="#fff3df"/>':id==='dolphin'?'<path d="M18 31Q25 39 32 31" fill="none" stroke="#276d91" stroke-width="1.5"/>':'<ellipse cx="25" cy="32" rx="9" ry="6" fill="'+(id==='otter'?'#f4e6d2':'#fff0df')+'"/>';
- const nose=id==='frog'?'':'<ellipse cx="25" cy="31" rx="2.5" ry="2" fill="'+(id==='penguin'?'#f5a84f':'#e98ca2')+'"/>';
- const whiskers=id==='otter'?'<path d="M18 31L8 28M18 34L8 35M32 31L42 28M32 34L42 35" stroke="#fff" stroke-width="1"/>':'';
- return '<svg class="animal-art'+(locked?' locked':'')+'" viewBox="0 0 50 46" role="img" aria-label="'+id+'">'+ears+'<ellipse cx="25" cy="27" rx="17" ry="16" fill="'+fur+'" stroke="#fff" stroke-width="1.5"/>'+face+'<circle cx="19" cy="25" r="2" fill="#403944"/><circle cx="31" cy="25" r="2" fill="#403944"/>'+nose+whiskers+'</svg>';
+ const fur=color||'#e9c99b', line='#765b49';
+ const parts={
+ bunny:{ears:'<path d="M17 19C7 1 10 -5 17 3Q23 10 23 20Z M29 20C28 9 34 -5 40 3Q45 11 33 20Z" fill="'+fur+'" stroke="'+line+'" stroke-width="1.3"/><path d="M16 14Q12 4 16 4Q21 9 21 17Z M32 17Q33 8 39 4Q42 8 35 15Z" fill="#eaa5ae"/>',head:'<path d="M8 29Q8 13 25 13Q42 13 42 29Q42 43 25 43Q8 43 8 29Z"/>'},
+ kitten:{ears:'<path d="M9 24L10 5Q11 2 15 7L24 18 M26 18L36 7Q40 2 41 5L42 24" fill="'+fur+'" stroke="'+line+'" stroke-width="1.5" stroke-linejoin="round"/><path d="M13 16L13 9L20 18 M30 18L38 9L38 16" fill="#e9a0a9"/>',head:'<path d="M7 28Q7 15 19 15Q25 12 31 15Q43 15 43 28Q43 43 25 43Q7 43 7 28Z"/>'},
+ frog:{ears:'<circle cx="14" cy="16" r="8" fill="'+fur+'" stroke="'+line+'" stroke-width="1.5"/><circle cx="36" cy="16" r="8" fill="'+fur+'" stroke="'+line+'" stroke-width="1.5"/>',head:'<path d="M8 27Q8 17 25 17Q42 17 42 27Q42 42 25 42Q8 42 8 27Z"/>'},
+ bear:{ears:'<circle cx="13" cy="19" r="8" fill="'+fur+'" stroke="'+line+'" stroke-width="1.5"/><circle cx="37" cy="19" r="8" fill="'+fur+'" stroke="'+line+'" stroke-width="1.5"/><circle cx="13" cy="19" r="4" fill="#e7b5a1"/><circle cx="37" cy="19" r="4" fill="#e7b5a1"/>',head:'<path d="M8 29Q8 15 25 15Q42 15 42 29Q42 43 25 43Q8 43 8 29Z"/>'},
+ dog:{ears:'<path d="M12 18Q2 12 4 29Q5 39 17 34L20 21Z M38 18Q48 12 46 29Q45 39 33 34L30 21Z" fill="#ad7951" stroke="'+line+'" stroke-width="1.4"/>',head:'<path d="M8 29Q8 15 25 15Q42 15 42 29Q42 43 25 43Q8 43 8 29Z"/>'},
+ fox:{ears:'<path d="M8 25L8 2L25 17L42 2L42 25" fill="'+fur+'" stroke="'+line+'" stroke-width="1.5"/><path d="M12 17L12 7L21 18 M38 17L38 7L29 18" fill="#fff0dc"/>',head:'<path d="M8 28Q8 15 25 15Q42 15 42 28L25 44Z"/>'},
+ lamb:{ears:'<ellipse cx="11" cy="23" rx="7" ry="5" fill="#fff" stroke="'+line+'"/><ellipse cx="39" cy="23" rx="7" ry="5" fill="#fff" stroke="'+line+'"/><circle cx="17" cy="17" r="7" fill="#fff"/><circle cx="25" cy="14" r="8" fill="#fff"/><circle cx="33" cy="17" r="7" fill="#fff"/>',head:'<path d="M9 29Q9 18 25 18Q41 18 41 29Q41 43 25 43Q9 43 9 29Z"/>'},
+ axolotl:{ears:'<path d="M11 27Q1 15 7 9L15 20L13 5L19 4L21 24 M39 27Q49 15 43 9L35 20L37 5L31 4L29 24" fill="#ed9dbb" stroke="'+line+'" stroke-width="1.2" stroke-linejoin="round"/>',head:'<ellipse cx="25" cy="29" rx="17" ry="15"/>'},
+ penguin:{ears:'<path d="M11 24Q2 15 3 25L10 35 M39 24Q48 15 47 25L40 35" fill="#43556b" stroke="'+line+'" stroke-width="1.2"/>',head:'<ellipse cx="25" cy="29" rx="17" ry="17"/>'},
+ dragon:{ears:'<path d="M10 24L6 5L22 17L28 17L44 5L40 24" fill="'+fur+'" stroke="'+line+'" stroke-width="1.5"/><path d="M19 14L22 5L26 15L30 5L33 15" fill="#a9d99b"/>',head:'<path d="M8 29Q8 15 25 15Q42 15 42 29Q42 43 25 43Q8 43 8 29Z"/>'},
+ unicorn:{ears:'<path d="M12 24L13 8L24 19 M26 19L37 8L38 24" fill="'+fur+'" stroke="'+line+'" stroke-width="1.4"/><path d="M23 18L27 1L32 19Z" fill="#f5d06f" stroke="'+line+'" stroke-width="1"/>',head:'<path d="M8 29Q8 15 25 15Q42 15 42 29Q42 43 25 43Q8 43 8 29Z"/>'},
+ dolphin:{ears:'<path d="M11 27Q1 18 5 11Q15 14 19 25 M39 27Q49 18 45 11Q35 14 31 25" fill="'+fur+'" stroke="'+line+'" stroke-width="1.3"/>',head:'<path d="M8 27Q15 13 29 17Q41 19 42 29Q39 42 23 42Q9 40 8 27Z"/>'},
+ deer:{ears:'<path d="M13 23Q5 11 8 5Q15 7 19 22 M37 23Q45 11 42 5Q35 7 31 22" fill="'+fur+'" stroke="'+line+'" stroke-width="1.3"/><path d="M13 15L7 8M12 11L5 11M37 15L43 8M38 11L45 11" fill="none" stroke="#8b6548" stroke-width="2" stroke-linecap="round"/>',head:'<path d="M10 28Q10 15 25 15Q40 15 40 28Q40 43 25 43Q10 43 10 28Z"/>'},
+ otter:{ears:'<circle cx="13" cy="22" r="6" fill="'+fur+'" stroke="'+line+'"/><circle cx="37" cy="22" r="6" fill="'+fur+'" stroke="'+line+'"/>',head:'<ellipse cx="25" cy="29" rx="17" ry="15"/>'}
+ }[id]||{ears:'',head:'<circle cx="25" cy="29" r="16"/>'};
+ const muzzle=(id==='frog'||id==='dolphin')?'':'<ellipse cx="25" cy="33" rx="8" ry="6" fill="'+(id==='penguin'?'#fff3df':id==='otter'?'#e9d7bd':'#fff0df')+'" stroke="'+line+'" stroke-width=".7"/>';
+ const eyes='<ellipse cx="19" cy="27" rx="1.8" ry="2.5" fill="#382f31"/><ellipse cx="31" cy="27" rx="1.8" ry="2.5" fill="#382f31"/>';
+ const nose=id==='frog'?'<path d="M17 34Q25 41 33 34" fill="none" stroke="#426d38" stroke-width="1.5" stroke-linecap="round"/>':'<ellipse cx="25" cy="32" rx="2.2" ry="1.7" fill="'+(id==='penguin'?'#e9a84b':'#d98d91')+'"/><path d="M25 34Q23 38 20 37M25 34Q27 38 30 37" fill="none" stroke="'+line+'" stroke-width="1" stroke-linecap="round"/>';
+ const cheeks='<circle cx="13" cy="33" r="3" fill="#efa9a0" opacity=".75"/><circle cx="37" cy="33" r="3" fill="#efa9a0" opacity=".75"/>';
+ return '<svg class="animal-art'+(locked?' locked':'')+'" viewBox="0 0 50 46" role="img" aria-label="'+id+'">'+parts.ears+'<g fill="'+fur+'" stroke="'+line+'" stroke-width="1.3" stroke-linejoin="round">'+parts.head+'</g>'+muzzle+eyes+cheeks+ (id==='frog'?nose:nose) +'</svg>';
 }
 document.querySelectorAll('[data-icon]').forEach(el=>{el.innerHTML=friendIcon(el.dataset.icon)});
 function renderBook(){$('cards').innerHTML='';pets.forEach(p=>{const el=document.createElement('div');el.className='pet'+(unlocked.has(p.id)?'':' locked');el.innerHTML='<div class="emoji">'+(unlocked.has(p.id)?friendIcon(p.id,p.color):'<span class="friend-icon locked" aria-hidden="true"><i></i></span>')+'</div><b>'+(unlocked.has(p.id)?p.name:'Mystery friend')+'</b><div>'+(unlocked.has(p.id)?'Tap to choose':p.cost+' jelly drops')+'</div>';el.onclick=()=>{if(unlocked.has(p.id)){changePet(p.id);$('book').style.display='none';$('message').textContent=p.name+' is ready to run! ✨'}};$('cards').appendChild(el)})}
